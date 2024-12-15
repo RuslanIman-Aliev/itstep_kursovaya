@@ -1,0 +1,95 @@
+.container-best {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+    margin: 20px auto;
+    justify-content: center;
+
+}
+
+.card-best {
+    width: 400px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    position: relative;
+    padding: 10px;
+}
+
+.image-card {
+    width: 400px;
+    height: 300px;
+    object-fit:cover;
+    border-radius: 12px;
+
+}
+
+.index-best {
+    font-size: 14px;
+    color: #999;
+    padding: 10px;
+    font-weight: bold;
+}
+
+.adress-best {
+    font-size: 16px;
+    color: #333;
+    padding: 0 10px 10px;
+}
+
+.blockes-best {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+}
+
+.block-best {
+    text-align: center;
+    flex: 1;
+    font-size: 14px;
+}
+
+.block-best p {
+    margin: 0;
+    font-weight: bold;
+}
+
+.price-best {
+    font-size: 20px;
+    color: #333;
+    font-weight: bold;
+    padding: 10px;
+}
+
+.button-read-more-best {
+    text-align: center;
+    width: 100px;
+    padding: 15px 10px;
+    background-color: #0056ff;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+   border-radius: 15px;
+
+}
+
+.button-read-more-best:hover {
+    background-color: #003fcc;
+}
+
+.icons-best{
+    font-size: 20px;
+}
+.price-and-button-best{
+    display: flex;
+    flex-direction: row;
+    margin-top: 20px;
+    justify-content: space-between; /* Распределяет элементы по краям */
+    width: 100%;
+     
+}
