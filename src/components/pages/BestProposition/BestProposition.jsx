@@ -12,13 +12,18 @@ const BestProposition = () => {
     const [data, setData] = useState(null);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
-
+    const [photo, setPhoto] = useState("https://bookingimages.blob.core.windows.net/images-container/18.jpg");
     useEffect(() => {
         const loadData = async () => {
             try {
                 const result = await fetchBestProporties(); 
                 console.log(result);
                 setData(result);
+                // const res2 = await fetch("https://bookingimages.blob.core.windows.net/images-container/18.jpg");
+                // const blob = await res2.blob();  // Получаем данные в виде Blob
+                // const photoUrl = URL.createObjectURL(blob);  // Создаем URL из Blob
+                // setPhoto(photoUrl);
+                // console.log(res2)
             } catch (err) {
                 setError(err.message);
             }
@@ -47,7 +52,7 @@ const BestProposition = () => {
                     return (
                         <div className="card-best" key={item.id}>  
                             <div className="div-card-best">
-                                <img src={mainBackground} alt="" className="image-card" />
+                                <img src={photo} alt="" className="image-card" />
                             </div>
                             <div className="index-best">{address.postalCode || 'N/A'}</div>
                             <div className="adress-best">{address.street || 'No Street'}, {address.city || 'No City'}</div>
