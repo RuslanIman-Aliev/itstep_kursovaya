@@ -11,7 +11,7 @@ import {TonConnectUIProvider, TonConnectButton } from '@tonconnect/ui-react';
 import './App.css';
 function App() {
   return (
-    <TonConnectUIProvider manifestUrl="http://localhost:3000/tonconnect-manifest.json" onError={(error) => {
+    <TonConnectUIProvider manifestUrl="https://itstep-kursovaya.vercel.app/tonconnect-manifest.json" onError={(error) => {
       console.error("TonConnect Error:", error);
     }}>
            <Router>
