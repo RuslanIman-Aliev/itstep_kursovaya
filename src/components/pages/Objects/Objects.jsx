@@ -14,6 +14,8 @@ import { fetchBestPlacesNear } from '../../../api/apiForPopularObjectNear';
 import { fetchForRecomendation } from '../../../api/fetchForRecomendation';
 import PopularPlaces from './PopularPlaces';
 import PhotoCarousel from "../PhotoCarousel/PhotoCarousel";
+import { fetchInfo } from '../../../api/fetchApi';
+
 
 const Objects = () => {
     const { id } = useParams();
@@ -21,29 +23,25 @@ const Objects = () => {
     const [days, setDays] = useState(0);
     const [bestPlaces, setBestPlaces] = useState([]);
     const [bestRestaurant, setRestaurant] = useState([]);
-
+    const [photos,setPhotos]= useState([])
     const dateRangeRef = useRef(null);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch(`https://localhost:7152/api/objects/${id}`);
-                if (!response.ok) {
-                    throw new Error(`Error HTTP: ${response.status}`);
-                }
-                const data = await response.json();
-                setObject(data);
-                const address = `${data.address.postalCode}+${data.address.street}+${data.address.city}+${data.address.country}`
+                const objectUrl =  `https://localhost:7152/api/objects/${id}`;
+                const photoUrl = `https://localhost:7152/api/objects/photo/${id}`
+                const dataObject = await fetchInfo(objectUrl)
+                setObject(dataObject);
+                const dataPhotos =await fetchInfo(photoUrl)
+                setPhotos(dataPhotos.map(photo => photo.imageUrl))
+                const address = `${dataObject.address.postalCode}+${dataObject.address.street}+${dataObject.address.city}+${dataObject.address.country}`
                 const result = await fetchBestPlacesNear(address);
                 const { lat, lng } = result.results[0].geometry.location;
-                console.log(lat, lng)
                 const bestProposition = await fetchForRecomendation(lat, lng, "tourist_attraction");
-                console.log(bestProposition)
                 setBestPlaces(bestProposition)
                 const bestRestaurants = await fetchForRecomendation(lat, lng, "restaurant");
-                console.log(bestRestaurants)
                 setRestaurant(bestRestaurants)
-                console.log(`${bestPlaces} sdsdsds`)
             } catch (er) {
                 console.error('Fetch error:', er);
             }
@@ -92,7 +90,7 @@ const Objects = () => {
     const totalCount = items.price * days;
     const service = totalCount * 0.01;
     const totalSum = service + totalCount;
-    const images = object.images || [mainBackground,mainBackground,mainBackground];
+    //const images = object.images || [mainBackground,mainBackground,mainBackground];
     return (
         <div className="container-object">
             <div className="container-img-pay-object">
@@ -104,8 +102,8 @@ const Objects = () => {
 
                     </div>
                     <div className="div-image-object">
-                         {images.length > 0 ? (
-                            <PhotoCarousel images={images} />
+                         {photos.length > 0 ? (
+                            <PhotoCarousel images={photos} />
                         ):(
                          <div></div>   
                         )}

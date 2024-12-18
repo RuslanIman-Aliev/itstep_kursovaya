@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';  
 import { fetchBestProporties } from '../../../api/apiForBestProposition';
-import mainBackground from '../../../img/AboutImages/mainbackground.png';
-import './BestProposition.css'
 import { TbBuildingSkyscraper } from "react-icons/tb";
 import { LuBedDouble } from "react-icons/lu";
 import { LiaBathSolid } from "react-icons/lia";
 import { BsArrowsMove } from "react-icons/bs";
+import './BestProposition.css'
 
 const BestProposition = () => {
     const [data, setData] = useState(null);
@@ -19,11 +18,7 @@ const BestProposition = () => {
                 const result = await fetchBestProporties(); 
                 console.log(result);
                 setData(result);
-                // const res2 = await fetch("https://bookingimages.blob.core.windows.net/images-container/18.jpg");
-                // const blob = await res2.blob();  // Получаем данные в виде Blob
-                // const photoUrl = URL.createObjectURL(blob);  // Создаем URL из Blob
-                // setPhoto(photoUrl);
-                // console.log(res2)
+                
             } catch (err) {
                 setError(err.message);
             }
