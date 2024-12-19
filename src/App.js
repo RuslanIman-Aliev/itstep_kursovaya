@@ -18,10 +18,11 @@ function App() {
       <Routes>
         <Route path="/" element={
           <>
-            <About />
+          <Auth/>
+            {/* <About />
             <Info />
             <BestProposition />
-            <TonConnectButton/>
+            <TonConnectButton/> */}
            </>
         } />
         <Route path="/object/:id" element={<Objects />} />
