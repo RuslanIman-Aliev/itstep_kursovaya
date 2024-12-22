@@ -32,22 +32,6 @@
 
 }
 
-.check-availability {
-  font-family: Arial, sans-serif;
-  position: relative;
-  padding: 30px 30px;
-  width: 100%;
-  max-width: 1100px;
-  background: #fff;
-  border-radius: 24px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.check-availability-text {
-  font-size: 1.5rem;
-  color: #333;
-  display: flex;
-}
 
 .form-container {
   display: flex;
@@ -78,45 +62,7 @@
   background-color: white;
   padding: 0 5px;  
 }
- .icon {
-  font-size: 30px;
-  color: black;
-  margin-right: 8px;
-}
-
-input {
-  border: none;
-  outline: none;
-  background: white;
-  position: relative;
-}
-.find-object, .people-count, .find-date{
-  height: 30px;
-  font-size: 20px;
-  
-}
-
-.search-button {
-  position: absolute;
-  right: -40px;
-  background: #563dff;
-  color: #fff;
-  border: none;
-  margin-left: 10px;
-  padding: 16px 16px;
-  border-radius: 40px;
-  cursor: pointer;
-  display: flex;
-  
-}
-
-.search-button .search-icon {
-  font-size: 30px;
-}
-
-.search-button:hover {
-  background: #402cad;
-}
+ 
 .availability-container{
   display: flex;
   flex-direction: column;

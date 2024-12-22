@@ -9,6 +9,7 @@ import Objects from './components/pages/Objects/Objects';
 import {TonConnectUIProvider, TonConnectButton } from '@tonconnect/ui-react';
 
 import './App.css';
+import FindObjects from './components/pages/FindObjects/FindObjects';
 function App() {
   return (
     <TonConnectUIProvider manifestUrl="https://itstep-kursovaya.vercel.app/tonconnect-manifest.json" onError={(error) => {
@@ -18,11 +19,12 @@ function App() {
       <Routes>
         <Route path="/" element={
           <>
-          <Auth/>
+          {/* <Auth/> */}
             {/* <About />
             <Info />
             <BestProposition />
             <TonConnectButton/> */}
+            <FindObjects/>
            </>
         } />
         <Route path="/object/:id" element={<Objects />} />
