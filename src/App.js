@@ -20,11 +20,13 @@ function App() {
         <Route path="/" element={
           <>
           {/* <Auth/> */}
-            {/* <About />
+            {/* 
             <Info />
             <BestProposition />
             <TonConnectButton/> */}
+
             <FindObjects/>
+            
            </>
         } />
         <Route path="/object/:id" element={<Objects />} />

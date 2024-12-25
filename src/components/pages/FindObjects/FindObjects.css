@@ -1,0 +1,134 @@
+body{
+    background-color: rgb(251,252,252);
+}
+.container-search-find{
+    display: flex;
+    justify-content: center;  
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    margin-top: 15px;
+}
+.container-image-list{
+    background-image: url("../../../img/MainImages/listimage.jpg");
+    height: 400px;
+    width: 80%;
+    background-size: cover;  
+    background-repeat: no-repeat;  
+    display: flex;
+    background-position: center;  
+    border-radius: 20px;
+    justify-content: center;  
+    align-items: center;
+    flex-direction: column;
+}
+.check-availability{
+    width: 85%;
+    padding: 30px;
+}
+.text-find{
+    font-family: Poppins, sans-serif;
+    font-size: 56px;
+    font-weight: 700px;
+    margin: 20px 0px;
+    color: white;
+}
+.container-main-list{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+.container-part1-filters-list{
+    width: 20%;
+    display: flex;
+    flex-direction: column;
+}
+.object-card-list{
+    width: 100%;
+}
+.container2-main-object-list{
+    display: flex;
+    flex-direction: row;
+    width: 60%;
+}
+.image-row-list, .photo-list{
+    width: 350px;
+    height: 250px;
+    border-radius: 20px;
+
+}
+.row-info-list{
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+
+}
+.emoji-block-info-list{
+    display: flex;
+    justify-content: space-between;
+}
+.share-button-list{
+    border: none;
+    background-color: rgb(245, 245, 246);
+    border-radius: 50%;
+
+}
+.share-icon-list{
+    padding: 7px;
+    font-size: 14px;
+}
+.header-info-list{
+    color: rgb(11, 10, 19);
+    font-family: Poppins, sans-serif;
+    font-size: 21px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+.emoji1-info-list{
+    display: flex;
+    justify-items: center;
+    align-items: center;
+}
+.icon-address-info-list{
+    color: rgb(116, 117, 121);
+    font-family: "DM Sans", sans-serif;
+    font-size: 16px;
+
+}
+.geo-icon-list{
+    font-size: 16px;
+}
+
+.main-info-list {
+    display: grid;
+    grid-template-rows: auto auto 1fr auto;  
+    height: 250px;
+    width: 100%;
+}
+
+.price-info-list {
+    align-self: end;  
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 10px;
+}
+.sum-per-day-info-list{
+    color: rgb(11, 10, 18);
+    font-family: Poppins, sans-serif;
+    font-size: 21px;
+    font-weight:  bold;
+    
+}
+.days-info-list{
+    color:     rgb(116, 117, 121);
+    font-family: "DM Sans", sans-serif;
+    font-size: 16px;
+}
+.button-read-more-info-list{
+background-color: rgb(11, 10, 18);
+color: white;
+border-radius: 10px;
+padding: 10px;
+}

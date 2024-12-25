@@ -1,0 +1,18 @@
+.rating-stars {
+    gap: 5px;  
+  }
+  .star, .star-empty, .star-half{
+    font-size: 20px;
+  }
+  .star {
+    color:rgb(247, 195, 46);
+  }
+  
+  .star-empty {
+    color: #ddd;  
+  }
+  
+  .star-half {
+    color:rgb(247, 195, 46);
+  }
+  
