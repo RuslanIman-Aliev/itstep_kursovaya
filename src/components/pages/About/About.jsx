@@ -14,7 +14,7 @@ const About = () => {
         <p className='text'>Here, you can discover the perfect place that suits your style and needs—where comfort meets convenience.</p>
         <div className="availability-container">
           <h2 className='check-availability-text'>Check Availability</h2>
-          <Search/>
+          <Search className="check-availability"/>
         </div>
       </div>
     </div>
