@@ -25,11 +25,13 @@ function App() {
             <BestProposition />
             {/* <TonConnectButton/>  */}
 
-             <FindObjects/> 
+             {/* <FindObjects/>  */}
             
            </>
         } />
         <Route path="/object/:id" element={<Objects />} />
+        <Route path="/list" element={<FindObjects />} />
+
       </Routes>
     </Router>
         </TonConnectUIProvider>

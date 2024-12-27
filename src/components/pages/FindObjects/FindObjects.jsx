@@ -1,17 +1,24 @@
+import { useSearchParams } from "react-router-dom";
 import Search from "../../layouts/Search/Search"
-import './FindObjects.css'
 import mainBackground from '../../../img/AboutImages/mainbackground.png';
 import RatingStars from "../../layouts/Ratings/RatingStars";
+import './FindObjects.css'
 import { FaShareAlt } from "react-icons/fa";
 import { BsGeoAlt } from "react-icons/bs";
 
 const FindObjects = () => {
+    const [searchParams] = useSearchParams();
+
+    const location = searchParams.get("location");
+    const dateRange = searchParams.get("dateRange");
+    const guests = searchParams.get("guests");
+    console.log(guests,dateRange,location)
     return (
         <div>
             <div className="container-search-find">
                 <div className="container-image-list">
                     <h2 className="text-find">150 Hotels in New York</h2>
-                    <Search />
+                    <Search loc={location} date={dateRange} guest={guests}  />
                 </div>
             </div>
             <div className="container-main-list">
