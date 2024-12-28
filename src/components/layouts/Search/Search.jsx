@@ -16,7 +16,7 @@ const Search = ({ loc = "", date = "", guest = "" }) => {
       mode: "range",
       dateFormat: "Y-m-d",
       defaultDate: date ? date : undefined,
-      minDate: Date.now(),
+       minDate: new Date().toISOString().split("T")[0],
       onChange: (selectedDates, dateStr) => {
         setDateRange(dateStr);
       },
