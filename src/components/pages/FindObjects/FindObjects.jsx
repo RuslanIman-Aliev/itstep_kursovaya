@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams,useNavigate } from "react-router-dom";
 import Search from "../../layouts/Search/Search"
 import mainBackground from '../../../img/AboutImages/mainbackground.png';
 import RatingStars from "../../layouts/Ratings/RatingStars";
@@ -7,25 +7,29 @@ import './FindObjects.css'
 import { FaShareAlt } from "react-icons/fa";
 import { BsGeoAlt } from "react-icons/bs";
 import { fetchInfo } from '../../../api/fetchApi';
+import PhotoCarousel from '../PhotoCarousel/PhotoCarousel';
 
 const FindObjects = () => {
     const [searchParams] = useSearchParams();
+    const navigate = useNavigate();
     const [objects, setObjects] = useState([]);
     const location = searchParams.get("location");
     const dateRange = searchParams.get("dateRange");
     const guests = searchParams.get("guests");
     const date = dateRange.split(' to ');
-    const dateIn = date[0];
-    const dateOut = date[1];
+    const dateIn = date[0] || "";
+    const dateOut = date[1] || "";
     console.log(dateIn);
     console.log(dateOut);
     console.log(guests, dateRange, location)
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const objectsUrl = `https://localhost:7152/api/objects/getlistobjects?city=${location}&guestCount=${guests}&dateIn=2024-11-11&dateOut=2024-11-176`
+                const objectsUrl = `https://localhost:7152/api/objects/getlistobjects?city=${location}&guestCount=${guests}&dateIn=${dateIn}&dateOut=${dateOut}`
                 const dataObject = await fetchInfo(objectsUrl)
-                
+                setObjects(dataObject)
+
+                console.log(dataObject)
             } catch (er) {
                 console.error('Fetch error:', er);
             }
@@ -34,12 +38,14 @@ const FindObjects = () => {
         fetchData();
 
 
-    }, []);
+    }, [location, guests, dateIn, dateOut]);
+ 
+
     return (
         <div>
             <div className="container-search-find">
                 <div className="container-image-list">
-                    <h2 className="text-find">150 Hotels in New York</h2>
+                    <h2 className="text-find">{objects.length} Objects in {location}</h2>
                     <Search loc={location} date={dateRange} guest={guests} />
                 </div>
             </div>
@@ -123,46 +129,33 @@ const FindObjects = () => {
 
                 </div>
                 <div className="container2-main-object-list">
-                    <div className="object-card-list">
-                        <div className="row-info-list">
-                            <div className="image-row-list"> {//добавтиь карусель
-                            }
-                                <img src={mainBackground} alt="" className="photo-list" />
-                            </div>
-                            <div className="main-info-list">
-                                <div className="emoji-block-info-list">
-                                    <div className="emoji1-info-list"><RatingStars rating={4.5} /></div>
-                                    <div className="emoji2-info-list"><button className="share-button-list"><FaShareAlt className="share-icon-list" />                                    </button></div>
+                    {objects.map((object) => (
+                    <><div className="object-card-list">
+                            <div className="row-info-list">
+                                <div className="image-row-list">
+                                    
+                                    {object.photos.length > 1 ? (
+                                        <PhotoCarousel images={object.photos} />
+                                    ):(
+                                     <img src={object.photos} alt="" className='image-object' />   
+                                    )}
                                 </div>
-                                <h3 className="header-info-list">Courtyard by Marriot New York</h3>
-                                <div className="icon-address-info-list"><BsGeoAlt className="geo-icon-list" />                                 5855 W Century Blvd, Los Angeles - 90045</div>
-                                <div className="price-info-list">
-                                    <div className="sum-per-day-info-list">800$ <span className="days-info-list"> /day</span></div>
-                                    <button className="button-read-more-info-list">Read more</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="object-card-list">
-                        <div className="row-info-list">
-                            <div className="image-row-list"> {//добавтиь карусель
-                            }
-                                <img src={mainBackground} alt="" className="photo-list" />
-                            </div>
-                            <div className="main-info-list">
-                                <div className="emoji-block-info-list">
-                                    <div className="emoji1-info-list"><RatingStars rating={4.5} /></div>
-                                    <div className="emoji2-info-list"><button className="share-button-list"><FaShareAlt className="share-icon-list" />                                    </button></div>
-                                </div>
-                                <h3 className="header-info-list">Courtyard by Marriot New York</h3>
-                                <div className="icon-address-info-list"><BsGeoAlt className="geo-icon-list" />                                 5855 W Century Blvd, Los Angeles - 90045</div>
-                                <div className="price-info-list">
-                                    <div className="sum-per-day-info-list">800$ <span className="days-info-list"> /day</span></div>
-                                    <button className="button-read-more-info-list">Read more</button>
+                                <div className="main-info-list">
+                                    <div className="emoji-block-info-list">
+                                        <div className="emoji1-info-list"><RatingStars rating={object.reviews.starsCount} /></div>
+                                        <div className="emoji2-info-list"><button className="share-button-list"><FaShareAlt className="share-icon-list" />                                    </button></div>
+                                    </div>
+                                    <h3 className="header-info-list">{object.name}</h3>
+                                    <div className="icon-address-info-list"><BsGeoAlt className="geo-icon-list" />   {`${object.address.postalCode} ${object.address.street} ${object.address.city} ${object.address.country}`}</div>
+                                    <div className="price-info-list">
+                                        <div className="sum-per-day-info-list">{object.price}$ <span className="days-info-list"> /day</span></div>
+                                        <button className="button-read-more-info-list" onClick={() => navigate(`/object/${object.id}`)}>Read more</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </>
+                    ))}
                 </div>
             </div>
         </div>
