@@ -1,0 +1,269 @@
+body{
+    background-color: rgb(250, 252, 252);
+}
+.header-confirm{
+    width: 80%;
+    margin: 0px auto;
+    background-color: rgb(245, 245, 246);
+    height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 50px;
+    border-radius: 20px;
+    flex-direction: row;
+    padding: 0px 40px;
+}
+.text-header-confirm{
+    color:rgb(11, 10, 18);
+    font-size: 48px;
+    width: 100%;
+    font-weight: bold;
+    font-family: Poppins, sans-serif;
+}
+.image-header-confirm{
+    background-image: url("../../../img/MainImages/imgcheck.svg");
+    width: 250px;
+    height: 200px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    display: flex;
+    background-position: center;
+}
+.main-container-confirm{
+    width: 85%;
+    margin: 0px auto;
+    display: flex;
+    flex-direction: row;
+    gap: 60px;
+    margin-top: 50px;
+}
+.part1-container-confirm{
+    display: flex;
+    flex-direction: column;
+    width: 70%;
+}
+.part2-container-confirm{
+    display: flex;
+    flex-direction: column;
+    width: 30%;
+}
+.main-object-confirm{
+    display: flex;
+    flex-direction: row;
+}
+.info-part-confirm{
+    display: flex;
+    flex-direction: column;
+    padding-left: 30px;
+}
+.about-object-confirm{
+    display: flex;
+    flex-direction: row;
+    padding-top: 40px;
+    padding-bottom: 50px;
+    justify-content: space-between;
+}
+.price-container-confirm{
+    display: flex;
+    flex-direction: column;
+}
+.header-price-confirm{
+    font-family: Poppins, sans-serif;
+    font-weight: bold;
+    font-size: 21px;
+    padding: 20px;
+    border-bottom: 1px solid lightgray;
+}
+.block-price-confirm{
+    font-size: 18px;
+    display: flex;
+    justify-content: space-between;
+    padding: 0px 20px;
+    padding-top: 25px;
+    font-weight: 500;
+}
+.block-price-confirm:nth-child(3){
+    padding-bottom: 25px;
+}
+.object-charges-price-confirm{
+    font-family: Poppins, sans-serif;
+    font-weight: 400;
+}
+.sum-price-confirm{
+    font-size: 21px;
+    font-family: "DM Sans", sans-serif;
+    color: rgb(116, 117, 121);   
+}
+.pay-block-price-confirm{
+    display: flex;
+    justify-content: space-between;
+    color: rgb(11, 10, 18);
+    font-size: 21px;
+    font-family: "DM Sans", sans-serif;
+    padding: 25px 20px;
+    border-top: 1px solid lightgray;
+    font-weight: bold;
+}
+.pay-object-confirm{
+    align-items: center;
+    width: 60%;
+    padding: 16px 25px;
+    border-radius: 20px;
+    background-color: rgb(81, 67, 217);;
+    border: none;
+    color: white;
+    display: flex;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 16px;
+}
+.button-proceed-confirm{
+    display: flex;
+    justify-content: center;
+}
+.price-container-confirm{
+    background-color: white;
+    border-radius: 20px;
+    padding: 20px 5px;
+    padding-right: 5px;
+}
+.object-info-confirm{
+    font-family: Poppins, sans-serif;
+    font-size: 37px;
+    color: rgb(11, 10, 18);
+    padding: 15px 0px;
+    border-bottom: 1px solid lightgray;
+}
+.object-container-confirm{
+    background-color: white;
+    border-radius: 20px;
+    padding: 0px 15px;
+}
+.image-part-confirm{
+    background-image: url("../../../img/MainImages/imgtest.jpg");
+    height: 110px;
+    width: 150px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    display: flex;
+    background-position: center;
+}
+.name-object-confirm{
+    font-family: Poppins, sans-serif;
+    font-size: 21px;
+    color: rgb(11, 10, 18);
+    font-weight: bold;
+    padding: 5px 0px;
+}
+.rating-object-confirm{
+    display: flex;
+    flex-direction: row;
+    padding: 10px 0px
+}
+.text-stars-confirm{
+    padding-left: 10px;
+    font-family: Poppins, sans-serif;
+    font-size: 16px;
+    color: rgb(11, 10, 18);
+    font-weight: bold;
+}
+.block-object-confirm{
+    padding: 16px 50px;
+    background-color: rgb(245,245,246);
+    border-radius: 20px;
+}
+.date-object-confim, .count-object-confim{
+    font-family: Poppins, sans-serif;
+    font-size: 24px;
+    color: rgb(11, 10, 18);
+    font-weight: bold;
+}
+.checkOut-object-confim, .checkIn-object-confim, .guests-object-confim{
+    font-family: Poppins, sans-serif;
+    font-size: 16px;
+    color: rgb(11, 10, 18);
+}
+.time-object-confim, .nights-object-confim{
+    font-family: Poppins, sans-serif;
+    font-size: 16px;
+    color: rgb(116, 117, 121);
+    padding-left: 5px;
+}
+.icon-object-confirm{
+    font-size: 20px;
+}
+.icon-and-desc-confirm{
+    display: flex;
+    flex-direction: row;
+}
+.guests-container-confirm .object-info-confirm {
+    font-size: 30px;
+    margin-top: 0px;
+    padding: 15px 15px;
+}
+.guests-container-confirm{
+    background-color: white;
+    border-radius: 20px;
+    margin-top: 50px;
+}
+.guests-header-confirm{
+    display: flex;
+    flex-direction: row;
+}
+.main-guest-confirm{
+    background-color: rgb(245,245,246);
+    font-family: Poppins, sans-serif;
+    font-size: 16px;
+    color: rgb(11, 10, 18);
+    font-weight: bold;
+    padding: 15px 20px;
+    margin: 0px 15px;
+    border-radius: 15px;
+}
+.mini-form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    padding-right: 20px;
+  }
+  .add-guest-button {
+    margin-top: 10px;
+    color: rgb(81, 67, 217);
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: Poppins, sans-serif;
+  }
+  .guest-label {
+    display: block;
+    font-size: 18px;
+    margin-bottom: 5px;
+    color: rgb(133, 135, 138);  
+    font-family: "DM Sans", sans-serif;
+    font-weight: 500;
+    padding-left: 5px;
+}
+.select-input{
+    width: 150px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 16px;
+    font-size: 15px;
+   
+}
+.guest-input {
+    width: 260px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 16px;
+    font-size: 15px;
+}
+.label-and-input-confirm{
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+}

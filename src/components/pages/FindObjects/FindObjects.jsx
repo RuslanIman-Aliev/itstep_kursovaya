@@ -16,7 +16,7 @@ const FindObjects = () => {
     const location = searchParams.get("location");
     const dateRange = searchParams.get("dateRange");
     const guests = searchParams.get("guests");
-    const date = dateRange.split(' to ');
+    const date = dateRange.split(' to ') || "";
     const dateIn = date[0] || "";
     const dateOut = date[1] || "";
     console.log(dateIn);

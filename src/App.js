@@ -10,6 +10,7 @@ import {TonConnectUIProvider, TonConnectButton } from '@tonconnect/ui-react';
 
 import './App.css';
 import FindObjects from './components/pages/FindObjects/FindObjects';
+import ConfirmBookings from './components/pages/ConfirmBooking/ConfirmBooking';
 function App() {
   return (
     <TonConnectUIProvider manifestUrl="https://itstep-kursovaya.vercel.app/tonconnect-manifest.json" onError={(error) => {
@@ -20,11 +21,12 @@ function App() {
         <Route path="/" element={
           <>
           {/* <Auth/> */}
-             <About/>
+             {/* <About/>
             <Info />
             <BestProposition />
             {/* <TonConnectButton/>  */}
 
+            <ConfirmBookings/>
              {/* <FindObjects/>  */}
             
            </>
