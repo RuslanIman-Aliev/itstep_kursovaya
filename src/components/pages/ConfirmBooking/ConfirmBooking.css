@@ -206,6 +206,7 @@ body{
     background-color: white;
     border-radius: 20px;
     margin-top: 50px;
+    padding-bottom: 15px;
 }
 .guests-header-confirm{
     display: flex;
