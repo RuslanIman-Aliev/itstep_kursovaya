@@ -1,0 +1,99 @@
+body{
+    background-color: rgb(250, 252, 252);
+}
+.main-container-finish{
+    width: 50%;
+    margin:50px auto;
+    
+}
+.card-finish{
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    border-radius: 20px;
+}
+.congratulation-finish{
+    text-align: center;
+}
+.confirm-finish{
+    text-align: center;
+    color: rgb(116, 117, 121);
+    font-size: 21px;
+    font-weight: 400;
+    font-family: "DM Sans", sans-serif;
+}
+.object-name-finish{
+    text-align: center;
+    color: rgb(81, 67, 217);
+    font-weight: 700;
+    font-family: Poppins, sans-serif;
+    font-size: 21px;
+
+
+}
+.main-info-finish{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+   padding: 35px 20px;
+}
+.info-icon-finish{
+    display: flex;
+    flex-direction: row;
+    color: rgb(116, 117, 121);
+    font-family: "DM Sans", sans-serif;
+    font-weight: 400;
+}
+.info-container-finish{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+}
+.icon-finish{
+    font-size: 17px;
+    padding-top: 5px;
+}
+.info-finish{
+    font-size: 17px;
+    padding-left: 5px;
+}
+.value-finish{
+    color: rgb(11, 10, 18);
+    font-family: Poppins, sans-serif ;
+    font-weight:500;
+
+}
+.info-container-finish{
+    padding: 0px 20px;
+    display: flex;
+    flex-direction: row;
+}
+.part1-info-finish{
+    width: 45%;
+}
+.part2-info-finish{
+    width: 45%;
+} 
+.image-finish{
+    background-image: url("../../img/MainImages/listimage.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 400px;
+    display: flex;
+}
+.button-finish{
+    width: 30%;
+    padding: 10px 15px;
+    border: none;
+    cursor: pointer;
+    border-radius: 20px;
+    background-color: rgb(81, 67, 217);
+    color: white;
+}
+.btn-div-finish{
+    display: flex;
+    justify-content: center;
+    padding-bottom: 20px;
+}

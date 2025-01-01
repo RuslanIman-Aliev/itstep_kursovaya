@@ -1,4 +1,10 @@
 import React, { useState } from 'react';
+ import { Cell } from 'ton';  
+import { Buffer } from 'buffer';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from 'react-router-dom';
+import { useTonConnectUI } from '@tonconnect/ui-react';
 import { FaHotel } from "react-icons/fa6";
 import { BsGeoAlt } from "react-icons/bs";
 import { MdOutlineAccessAlarm } from "react-icons/md";
@@ -9,14 +15,115 @@ import './ConfirmBooking.css'
 import RatingStars from "../../layouts/Ratings/RatingStars";
 
 const ConfirmBookings = () => {
+    const [isLoading, setIsLoading] = useState(false);
     const [forms, setForms] = useState([1]);
+    const [errorMessage, setErrorMessage] = useState(null);  
+    const [transactionStatus, setTransactionStatus] = useState(null); 
+    const navigate = useNavigate(); 
+    const [tonConnectUI] = useTonConnectUI();
 
     const addNewForm = () => {
         setForms([...forms, forms.length + 1]);
     };
+    const transaction = {
+        validUntil: Date.now() + 5 * 60 * 1000,  
+        messages: [
+          {
+            address: 'UQB-eaopqBjwEDhJ2yV9lIXRa1Ml2UQYFS8Uuu4dloFSbot-',  
+            amount: '5000000',  
+          },
+        ],
+      };
+      const submitHandler = async () => {
+        setIsLoading(true);
+        setTransactionStatus(null);
+
+        try {
+            toast.info('Отправка транзакции. Пожалуйста, подождите...');
+            const result = await tonConnectUI.sendTransaction(transaction);
+            console.log('Transaction result:', result);
+
+            if (!result.boc) {
+                throw new Error('BOC отсутствует в ответе');
+            }
+
+            toast.info('Транзакция отправлена. Проверяем статус...');
+            const decodedHash = await decodeBOC(result.boc);
+            await periodicallyCheckTransactionStatus(decodedHash);
+        } catch (error) {
+            console.error('Transaction error:', error);
+            setTransactionStatus('Transaction failed');
+            toast.error(`Ошибка: ${error.message}`);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const decodeBOC = async (boc) => {
+        try {
+             const cell = Cell.fromBoc(Buffer.from(boc, 'base64'))[0];  
+             const txHash = cell.hash().toString('hex');  
+            console.log('Decoded Transaction Hash:', txHash);
+            return "txHash";
+        } catch (error) {
+            console.error('Error decoding BOC:', error);
+            throw new Error('Не удалось декодировать BOC');
+        }
+    };
+
+    const checkTransactionStatus = async (txHash) => {
+        const apiUrl = `https://toncenter.com/api/v2/getTransaction`; // Замените на нужный API
+        const params = { hash: txHash };
+
+        try {
+            const response = await fetch(`${apiUrl}?${new URLSearchParams(params)}`);
+            const data = await response.json();
+
+            if (!response.ok || data.error) {
+                console.error('Transaction check error:', data);
+                throw new Error(data.error?.message || 'Failed to fetch transaction status');
+            }
+
+            return data.result?.status === 'confirmed' ? 'success' : 'failed';
+        } catch (error) {
+            console.error('Error checking transaction status:', error);
+            throw error;
+        }
+    };
+
+    const periodicallyCheckTransactionStatus = async (txHash) => {
+        const maxAttempts = 10; // Максимум 10 попыток
+        const interval = 5000; // Интервал в 5 секунд
+
+        for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+            try {
+                const status = await checkTransactionStatus(txHash);
+
+                if (status === 'success') {
+                    setTransactionStatus('Transaction successful');
+                    toast.success('Транзакция успешно завершена!');
+                    return;
+                }
+
+                toast.info(`Попытка ${attempt}: статус пока не подтвержден`);
+            } catch (error) {
+                console.error('Error checking transaction status:', error);
+                toast.error(`Ошибка при проверке: ${error.message}`);
+            }
+
+            await new Promise((resolve) => setTimeout(resolve, interval));
+        }
+
+        setTransactionStatus('Transaction failed');
+        toast.error('Транзакция не выполнена после нескольких попыток.');
+    };
     return (
         <div className="container-confirm">
-
+{isLoading && (
+                <div className="loading-overlay">
+                    <div className="loading-message">Подождите, обрабатываем транзакцию...</div>
+                </div>
+            )}
             <div className="header-confirm">
                 <h3 className="text-header-confirm">Review your Booking</h3>
                 <div className="image-header-confirm"></div>
@@ -106,7 +213,9 @@ const ConfirmBookings = () => {
                     </div>
                 </div>
 
-
+                <div className="transaction-status">
+    {transactionStatus && <p>{transactionStatus}</p>}
+</div>
 
 
                 <div className="part2-container-confirm">
@@ -128,7 +237,10 @@ const ConfirmBookings = () => {
                             </div>
                         </div>
                         <div className="button-proceed-confirm">
-                            <button className="pay-object-confirm">Proceed</button>
+                        <button onClick={submitHandler} disabled={isLoading}>
+                {isLoading ? 'Обработка...' : 'Отправить транзакцию'}
+            </button>
+            {transactionStatus && <p>{transactionStatus}</p>}
                         </div>
                     </div>
                 </div>
