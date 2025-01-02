@@ -1,23 +1,21 @@
 const webpack = require('webpack');
 
-module.exports = {
-  webpack: (config) => {
-    config.resolve.fallback = {
-      ...config.resolve.fallback,
-      process: require.resolve('process/browser'),
-      stream: require.resolve('stream-browserify'),
-      http: require.resolve('stream-http'),
-      https: require.resolve('https-browserify'),
-      os: require.resolve('os-browserify/browser'),
-      util: require.resolve('util'),
-      buffer: require.resolve('buffer/')  
-    };
-
-     config.plugins.push(new webpack.ProvidePlugin({
+module.exports = function override(config, env) {
+  config.resolve.fallback = {
+    ...config.resolve.fallback,
+    buffer: require.resolve('buffer'),
+    stream: require.resolve('stream-browserify'),
+    http: require.resolve('stream-http'),
+    https: require.resolve('https-browserify'),
+    os: require.resolve('os-browserify/browser'),
+    path: require.resolve('path-browserify'),
+  };
+  config.plugins = [
+    ...config.plugins,
+    new webpack.ProvidePlugin({
+      Buffer: ['buffer', 'Buffer'],
       process: 'process/browser',
-      Buffer: ['buffer', 'Buffer'],  
-    }));
-
-    return config;
-  },
+    }),
+  ];
+  return config;
 };

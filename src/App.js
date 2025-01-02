@@ -22,21 +22,23 @@ function App() {
         <Route path="/" element={
           <>
           {/* <Auth/> */}
-          {/* <About/>
-            <Info />
-            <BestProposition /> */}
+          {/**/}
              {/* 
              
             
             {/* <ConfirmBookings/> */}
-<ConfirmBookings/>             {/* <FindObjects/>  */}
+             <About/>
+            <Info />
+            <BestProposition /> 
+{/* <ConfirmBookings/>             <FindObjects/>  */}
             
              <TonConnectButton/>  
            </>
         } />
         <Route path="/object/:id" element={<Objects />} />
         <Route path="/list" element={<FindObjects />} />
-
+        <Route path='/confirm' element = {<ConfirmBookings/>}/>
+        <Route path='/finishbooking' element = {<FinishBooking/>}/>
       </Routes>
     </Router>
         </TonConnectUIProvider>

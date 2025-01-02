@@ -141,7 +141,7 @@ body{
     padding: 0px 15px;
 }
 .image-part-confirm{
-    background-image: url("../../../img/MainImages/imgtest.jpg");
+    /* background-image: url("../../../img/MainImages/imgtest.jpg"); */
     height: 110px;
     width: 150px;
     background-size: cover;
@@ -169,7 +169,8 @@ body{
     font-weight: bold;
 }
 .block-object-confirm{
-    padding: 16px 50px;
+    padding: 16px 20px;
+    width: 25%;
     background-color: rgb(245,245,246);
     border-radius: 20px;
 }

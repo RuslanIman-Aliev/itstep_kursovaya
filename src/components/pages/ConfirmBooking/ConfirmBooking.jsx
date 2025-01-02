@@ -1,8 +1,5 @@
 import React, { useState } from 'react';
- import { Cell } from 'ton';  
-import { Buffer } from 'buffer';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useTonConnectUI } from '@tonconnect/ui-react';
 import { FaHotel } from "react-icons/fa6";
@@ -15,13 +12,23 @@ import './ConfirmBooking.css'
 import RatingStars from "../../layouts/Ratings/RatingStars";
 
 const ConfirmBookings = () => {
-    const [isLoading, setIsLoading] = useState(false);
     const [forms, setForms] = useState([1]);
-    const [errorMessage, setErrorMessage] = useState(null);  
-    const [transactionStatus, setTransactionStatus] = useState(null); 
     const navigate = useNavigate(); 
     const [tonConnectUI] = useTonConnectUI();
 
+    const location = useLocation();
+    const params = new URLSearchParams(location.search);
+    const objectString = params.get('data');
+    const myObject = JSON.parse(decodeURIComponent(objectString));
+
+    console.log(myObject); 
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        const options = { day: 'numeric', month: 'long', year: 'numeric' }; 
+        const formatted = date.toLocaleDateString('en-GB', options);   
+        return formatted.replace(',', '');
+    };
+    const newDate = myObject.dates.map(formatDate);
     const addNewForm = () => {
         setForms([...forms, forms.length + 1]);
     };
@@ -34,96 +41,81 @@ const ConfirmBookings = () => {
           },
         ],
       };
-      const submitHandler = async () => {
-        setIsLoading(true);
-        setTransactionStatus(null);
-
-        try {
-            toast.info('Отправка транзакции. Пожалуйста, подождите...');
-            const result = await tonConnectUI.sendTransaction(transaction);
-            console.log('Transaction result:', result);
-
-            if (!result.boc) {
-                throw new Error('BOC отсутствует в ответе');
-            }
-
-            toast.info('Транзакция отправлена. Проверяем статус...');
-            const decodedHash = await decodeBOC(result.boc);
-            await periodicallyCheckTransactionStatus(decodedHash);
-        } catch (error) {
-            console.error('Transaction error:', error);
-            setTransactionStatus('Transaction failed');
-            toast.error(`Ошибка: ${error.message}`);
-        } finally {
-            setIsLoading(false);
-        }
+      const hashTransaction = async (boc) => {
+         const data = new Uint8Array(atob(boc).split('').map(c => c.charCodeAt(0)));
+    
+         const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        
+         const hashArray = new Uint8Array(hashBuffer);    
+         const hexHash = Array.from(hashArray)
+            .map(byte => byte.toString(16).padStart(2, '0'))
+            .join('');
+    
+        return {hexHash };
     };
+    
+      const checkTransactionStatus = async (boc) => {
 
-    const decodeBOC = async (boc) => {
+        const apiUrl = `https://toncenter.com/api/v2/getTransactions?address=UQB-eaopqBjwEDhJ2yV9lIXRa1Ml2UQYFS8Uuu4dloFSbot-&limit=1&hash=${boc}&to_lt=0&archival=false
+`; 
         try {
-             const cell = Cell.fromBoc(Buffer.from(boc, 'base64'))[0];  
-             const txHash = cell.hash().toString('hex');  
-            console.log('Decoded Transaction Hash:', txHash);
-            return "txHash";
-        } catch (error) {
-            console.error('Error decoding BOC:', error);
-            throw new Error('Не удалось декодировать BOC');
-        }
-    };
-
-    const checkTransactionStatus = async (txHash) => {
-        const apiUrl = `https://toncenter.com/api/v2/getTransaction`; // Замените на нужный API
-        const params = { hash: txHash };
-
-        try {
-            const response = await fetch(`${apiUrl}?${new URLSearchParams(params)}`);
+            const response = await fetch(`${apiUrl}`);
             const data = await response.json();
 
             if (!response.ok || data.error) {
-                console.error('Transaction check error:', data);
-                throw new Error(data.error?.message || 'Failed to fetch transaction status');
+                throw new Error(data.error?.message || 'Ошибка получения статуса транзакции');
             }
-
-            return data.result?.status === 'confirmed' ? 'success' : 'failed';
+            return data.ok;
         } catch (error) {
-            console.error('Error checking transaction status:', error);
+            console.error('Ошибка при проверке статуса транзакции:', error);
             throw error;
         }
     };
 
-    const periodicallyCheckTransactionStatus = async (txHash) => {
-        const maxAttempts = 10; // Максимум 10 попыток
-        const interval = 5000; // Интервал в 5 секунд
+    const periodicallyCheckTransactionStatus = async (boc) => {
+        const maxAttempts = 20; 
+        const interval = 5000;  
 
         for (let attempt = 1; attempt <= maxAttempts; attempt++) {
             try {
-                const status = await checkTransactionStatus(txHash);
-
-                if (status === 'success') {
-                    setTransactionStatus('Transaction successful');
-                    toast.success('Транзакция успешно завершена!');
+                const status = await checkTransactionStatus(boc);
+                if (status == true) {
+                    navigate('/FinishBooking')
                     return;
                 }
 
-                toast.info(`Попытка ${attempt}: статус пока не подтвержден`);
             } catch (error) {
-                console.error('Error checking transaction status:', error);
-                toast.error(`Ошибка при проверке: ${error.message}`);
+                console.error('Ошибка при проверке статуса транзакции:', error);
+                alert('Error');
             }
 
             await new Promise((resolve) => setTimeout(resolve, interval));
         }
 
-        setTransactionStatus('Transaction failed');
-        toast.error('Транзакция не выполнена после нескольких попыток.');
+     };
+
+    const submitHandler = async () => {
+        
+        try {
+
+            const result = await tonConnectUI.sendTransaction(transaction, {
+                modals: ['before','error'],
+                notifications: ['before', 'success', 'error']
+            });
+            tonConnectUI.closeModal()
+           
+            if (!result.boc) {
+                throw new Error('BOC отсутствует в ответе');
+            }
+            const {hexHash } = await hashTransaction(result.boc);
+            await periodicallyCheckTransactionStatus(hexHash);
+        } catch (error) {
+            console.error('Ошибка транзакции:', error);
+         }  
     };
     return (
         <div className="container-confirm">
-{isLoading && (
-                <div className="loading-overlay">
-                    <div className="loading-message">Подождите, обрабатываем транзакцию...</div>
-                </div>
-            )}
+
             <div className="header-confirm">
                 <h3 className="text-header-confirm">Review your Booking</h3>
                 <div className="image-header-confirm"></div>
@@ -134,17 +126,17 @@ const ConfirmBookings = () => {
                     <div className="object-container-confirm">
                         <h3 className="object-info-confirm"><FaHotel className="object-icon-confirm" /> Object Information </h3>
                         <div className="main-object-confirm">
-                            <div className="image-part-confirm"></div>
+                            <div className="image-part-confirm"><img className="image-part-confirm" src={myObject.photos[0]} alt="" /></div>
                             <div className="info-part-confirm">
-                                <div className="name-object-confirm">Pride moon Village Resort & Spa</div>
-                                <div className="icon-address-info-list"><BsGeoAlt className="geo-icon-list" /> 5855 W Century Blvd, Los Angeles - 90045</div>
-                                <div className="rating-object-confirm"><RatingStars rating={4.5} /><span className="text-stars-confirm"> 4.5/5.0 </span></div>
+                                <div className="name-object-confirm">{myObject.name}</div>
+                                <div className="icon-address-info-list"><BsGeoAlt className="geo-icon-list" />{myObject.totalAddress}</div>
+                                <div className="rating-object-confirm"><RatingStars rating={myObject.reviews.starsCount} /><span className="text-stars-confirm"> {myObject.reviews.starsCount}/5.0 </span></div>
                             </div>
                         </div>
                         <div className="about-object-confirm">
                             <div className="block-object-confirm">
                                 <div className="checkIn-object-confim">Check-in</div>
-                                <div className="date-object-confim">4 March 2022</div>
+                                <div className="date-object-confim">{newDate[0]}</div>
                                 <div className="icon-and-desc-confirm">
                                     <MdOutlineAccessAlarm className="icon-object-confirm" />
                                     <div className="time-object-confim">12:30 pm</div>
@@ -152,7 +144,7 @@ const ConfirmBookings = () => {
                             </div>
                             <div className="block-object-confirm">
                                 <div className="checkOut-object-confim">Check out</div>
-                                <div className="date-object-confim">8 March 2022</div>
+                                <div className="date-object-confim">{newDate[1]}</div>
                                 <div className="icon-and-desc-confirm">
                                     <MdOutlineAccessAlarm className="icon-object-confirm" />
                                     <div className="time-object-confim">4:30 pm</div>
@@ -160,7 +152,7 @@ const ConfirmBookings = () => {
                             </div>
                             <div className="block-object-confirm">
                                 <div className="guests-object-confim">Guests</div>
-                                <div className="count-object-confim">2 Guests</div>
+                                <div className="count-object-confim">{myObject.guest} Guests</div>
                                 <div className="icon-and-desc-confirm">
                                     <GoSun className="icon-object-confirm" />
                                     <div className="nights-object-confim"> 3 Nights - 4 Days</div>
@@ -213,34 +205,26 @@ const ConfirmBookings = () => {
                     </div>
                 </div>
 
-                <div className="transaction-status">
-    {transactionStatus && <p>{transactionStatus}</p>}
-</div>
-
-
                 <div className="part2-container-confirm">
                     <div className="price-container-confirm">
                         <div className="header-price-confirm">Price Summary</div>
                         <div className="block-price-confirm">
                             <div className="object-charges-price-confirm">Object Charges</div>
-                            <div className="sum-price-confirm">$2200</div>
+                            <div className="sum-price-confirm">${myObject.totalCount}</div>
 
                         </div>
                         <div className="block-price-confirm">
                             <div className="object-charges-price-confirm">Taxes 1.5% Fees</div>
-                            <div className="sum-price-confirm">$2</div>
+                            <div className="sum-price-confirm">${myObject.charges}</div>
                         </div>
                         <div className="total-amount-price-confirm">
                             <div className="pay-block-price-confirm">
                                 <div className="pay-object-charges-price-confirm">Payable Now</div>
-                                <div className="pay-sum-price-confirm">$22,500</div>
+                                <div className="pay-sum-price-confirm">${myObject.totalprice}</div>
                             </div>
                         </div>
                         <div className="button-proceed-confirm">
-                        <button onClick={submitHandler} disabled={isLoading}>
-                {isLoading ? 'Обработка...' : 'Отправить транзакцию'}
-            </button>
-            {transactionStatus && <p>{transactionStatus}</p>}
+                        <button onClick={submitHandler} className='pay-object-confirm'>Pay</button>
                         </div>
                     </div>
                 </div>

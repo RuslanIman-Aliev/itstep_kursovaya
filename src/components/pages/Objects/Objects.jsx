@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import flatpickr from "flatpickr";
+import { navigate } from 'react-router-dom';
 import mainBackground from '../../../img/AboutImages/mainbackground.png';
 import "flatpickr/dist/flatpickr.min.css";
 import './Objects.css'
@@ -23,9 +24,11 @@ const Objects = () => {
     const [days, setDays] = useState(0);
     const [bestPlaces, setBestPlaces] = useState([]);
     const [bestRestaurant, setRestaurant] = useState([]);
-    const [photos,setPhotos]= useState([])
+    const [photos,setPhotos]= useState([]);
     const dateRangeRef = useRef(null);
-
+    const [dates, setDates] = useState('');  
+    const [guests, setGuests] = useState('');
+    const navigate = useNavigate();
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -61,6 +64,7 @@ const Objects = () => {
             const calendar = flatpickr(dateRangeRef.current, {
                 mode: "range",
                 dateFormat: "Y-m-d",
+                minDate: Date.now(),
                 onChange: (selectedDates) => {
                     if (selectedDates.length === 2) {
                         const startDate = selectedDates[0];
@@ -68,6 +72,7 @@ const Objects = () => {
                         const diffTime = Math.abs(endDate - startDate);
                         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
                         setDays(diffDays);
+                        setDates(selectedDates)
                     }
                 }
             });
@@ -83,21 +88,26 @@ const Objects = () => {
     if (!object) {
         return <div>Loading...</div>;
     }
-
+  
     const items = object;
     const address = items?.address;
     const special = items?.special;
     const totalCount = items.price * days;
     const service = totalCount * 0.01;
     const totalSum = service + totalCount;
-    //const images = object.images || [mainBackground,mainBackground,mainBackground];
+    const totalAddress = `${address.postalCode} ${address.street} ${address.city} ${address.country}`
+    const handleClick = () => {
+        Object.assign(object, { totalprice:totalSum, dates: dates, guest: guests,totalAddress:totalAddress,charges:service,totalCount:totalCount, photos});
+        const objectString = encodeURIComponent(JSON.stringify(object));
+        navigate(`/confirm?data=${objectString}`);
+    };
     return (
         <div className="container-object">
             <div className="container-img-pay-object">
                 <div className="address-photo-object">
                     <div className="address-object">
                         <div className="name-object">{items.name}</div>
-                        <div className="all-address-object">{address.postalCode} {address.street} {address.city} {address.country}</div>
+                        <div className="all-address-object">{totalAddress}</div>
 
 
                     </div>
@@ -117,14 +127,14 @@ const Objects = () => {
                         <div className="input-calendar-object">
                             <FaCalendarAlt className='calendar-object' />
                             <div className="inputs-object">
-                                <input type="text" className='find-date-object' ref={dateRangeRef} placeholder="Check in - Check out" />
+                                <input type="text" className='find-date-object'    ref={dateRangeRef} placeholder="Check in - Check out" />
                                 <p className="inputs-text-object">Check in - Check out</p>
                             </div>
                         </div>
                         <div className="input-people-object">
                             <MdPeopleOutline className='people-object' />
                             <div className="inputs-object">
-                                <input type="text" className='people-count-object' placeholder="Guests" />
+                                <input type="text"  onChange={(e) => setGuests(e.target.value)}  className='people-count-object' placeholder="Guests" />
                                 <p className="inputs-text-object">Guests</p>
                             </div>
                         </div>
@@ -149,7 +159,7 @@ const Objects = () => {
                                 </div>
                             </>
                         )}
-                        <button className="proceed-object">Proceed</button>
+                        <button className="proceed-object" onClick={handleClick}>Proceed</button>
                     </div>
                     {/* <div className="weather-object-form">
                     <div className="weather-object">9 C</div>
