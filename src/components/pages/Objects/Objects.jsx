@@ -16,6 +16,7 @@ import { fetchForRecomendation } from '../../../api/fetchForRecomendation';
 import PopularPlaces from './PopularPlaces';
 import PhotoCarousel from "../PhotoCarousel/PhotoCarousel";
 import { fetchInfo } from '../../../api/fetchApi';
+import { checkAuth } from '../Auth/CheckAuth';
 
 
 const Objects = () => {
@@ -32,6 +33,21 @@ const Objects = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
+                const authenticateUser = async () => {
+                    try {
+                        const isAuthenticated = await checkAuth();
+                        if (!isAuthenticated) {
+                            alert("You need to log in first!");
+                            navigate("/login");
+                        }
+                    } catch (authError) {
+                        console.error("Authentication error:", authError);
+                    }
+                };
+    
+                await authenticateUser();
+        
+                authenticateUser();
                 const objectUrl =  `https://localhost:7152/api/objects/${id}`;
                 const photoUrl = `https://localhost:7152/api/objects/photo/${id}`
                 const dataObject = await fetchInfo(objectUrl)

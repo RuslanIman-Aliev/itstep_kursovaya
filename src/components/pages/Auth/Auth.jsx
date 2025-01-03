@@ -1,23 +1,23 @@
 import React, { useState } from "react";
+import { navigate, useNavigate } from "react-router-dom";
 import './Auth.css';
 
 const Auth = () => {
-    const [login, setEmail] = useState("");
+    const [login, setLogin] = useState("");
     const [password, setPassword] = useState("");
-
+    const navigate = useNavigate()
     const handleLogin = async () => {
         try {
             const response = await fetch("https://localhost:7152/api/user/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ login, password }),
+                credentials: "include", 
             });
-    
+
             if (response.ok) {
-                const { accessToken, refreshToken } = await response.json();
-                localStorage.setItem("accessToken", accessToken);
-                localStorage.setItem("refreshToken", refreshToken);
                 alert("Login successful!");
+                navigate('/')
             } else {
                 const errorData = await response.json();
                 alert(`Login failed: ${errorData}`);
@@ -27,6 +27,7 @@ const Auth = () => {
             alert("An error occurred while making the request.");
         }
     };
+
     return (
         <div className="main-auth">
             <div className="container-auth">
@@ -34,11 +35,11 @@ const Auth = () => {
                 <p className="main-text-auth">Hi there!</p>
                 <p className="welcome-text-auth">Welcome to CompanyName</p>
                 <input
-                    type="email"
+                    type="text"
                     className="email-input-auth"
-                    placeholder="Email"
+                    placeholder="Login"
                     value={login}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) => setLogin(e.target.value)}
                 />
                 <input
                     type="password"
