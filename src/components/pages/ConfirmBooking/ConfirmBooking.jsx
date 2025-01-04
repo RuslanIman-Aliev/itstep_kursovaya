@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useTonConnectUI } from '@tonconnect/ui-react';
@@ -10,17 +10,18 @@ import { IoPeople } from "react-icons/io5";
 
 import './ConfirmBooking.css'
 import RatingStars from "../../layouts/Ratings/RatingStars";
+import { checkAuth } from '../Auth/CheckAuth';
 
 const ConfirmBookings = () => {
     const [forms, setForms] = useState([1]);
     const navigate = useNavigate(); 
     const [tonConnectUI] = useTonConnectUI();
+    const [user, setUser] = useState(null);
 
     const location = useLocation();
     const params = new URLSearchParams(location.search);
     const objectString = params.get('data');
     const myObject = JSON.parse(decodeURIComponent(objectString));
-
     console.log(myObject); 
     const formatDate = (dateString) => {
         const date = new Date(dateString);
@@ -32,6 +33,44 @@ const ConfirmBookings = () => {
     const addNewForm = () => {
         setForms([...forms, forms.length + 1]);
     };
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const response = await fetch("https://localhost:7152/api/user/me", {
+                    method: "GET",
+                    credentials: "include",
+                });
+                 
+                
+                if (!response.ok) {
+                    console.error("Failed to fetch user data");
+                    return;
+                }
+    
+                const userData = await response.json();
+               setUser(userData)
+                console.log("User data:", userData);
+            } catch (error) {
+                console.error("Error fetching user data:", error);
+            }
+        };
+    
+        const authenticateUser = async () => {
+            try {
+                const isAuthenticated = await checkAuth();
+                if (!isAuthenticated) {
+                    alert("You need to log in first!");
+                    navigate("/login");
+                }
+            } catch (authError) {
+                console.error("Authentication error:", authError);
+            }
+        };
+        authenticateUser();
+        fetchUserData();
+       
+    }, [navigate]);
+    
     const transaction = {
         validUntil: Date.now() + 5 * 60 * 1000,  
         messages: [
@@ -61,7 +100,7 @@ const ConfirmBookings = () => {
         try {
             const response = await fetch(`${apiUrl}`);
             const data = await response.json();
-
+            console.log('Transaction Status Data:', data);
             if (!response.ok || data.error) {
                 throw new Error(data.error?.message || 'Ошибка получения статуса транзакции');
             }
@@ -79,8 +118,17 @@ const ConfirmBookings = () => {
         for (let attempt = 1; attempt <= maxAttempts; attempt++) {
             try {
                 const status = await checkTransactionStatus(boc);
-                if (status == true) {
-                    navigate('/FinishBooking')
+                if (status === true) {
+                    Object.assign(myObject, {
+                        paymentMethod: "Crypto",
+                        date1:newDate[0],
+                        date2:newDate[1],
+                        userName:user.name,
+                        userSurname:user.surname
+                       
+                    });
+                    const objectString = encodeURIComponent(JSON.stringify(myObject));
+                    navigate(`/finishbooking?data=${objectString}`);
                     return;
                 }
 
@@ -108,6 +156,7 @@ const ConfirmBookings = () => {
                 throw new Error('BOC отсутствует в ответе');
             }
             const {hexHash } = await hashTransaction(result.boc);
+            console.log(hexHash)
             await periodicallyCheckTransactionStatus(hexHash);
         } catch (error) {
             console.error('Ошибка транзакции:', error);

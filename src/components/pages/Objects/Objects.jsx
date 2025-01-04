@@ -25,17 +25,27 @@ const Objects = () => {
     const [days, setDays] = useState(0);
     const [bestPlaces, setBestPlaces] = useState([]);
     const [bestRestaurant, setRestaurant] = useState([]);
-    const [photos,setPhotos]= useState([]);
+    const [photos, setPhotos] = useState([]);
     const dateRangeRef = useRef(null);
-    const [dates, setDates] = useState('');  
+    const [dates, setDates] = useState('');
     const [guests, setGuests] = useState('');
+    const [dateError, setDateError] = useState('');
+    const [guestsError, setGuestsError] = useState('');
     const navigate = useNavigate();
+
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const authenticateUser = async () => {
                     try {
                         const isAuthenticated = await checkAuth();
+                        const response = await fetch("https://localhost:7152/api/user/me", {
+                            method: "GET",
+                            credentials: "include",
+                        });
+                        const userData = await response.json();
+             //  setUser(userData)
+                console.log("User data:", userData);
                         if (!isAuthenticated) {
                             alert("You need to log in first!");
                             navigate("/login");
@@ -44,23 +54,22 @@ const Objects = () => {
                         console.error("Authentication error:", authError);
                     }
                 };
-    
+
                 await authenticateUser();
-        
-                authenticateUser();
-                const objectUrl =  `https://localhost:7152/api/objects/${id}`;
-                const photoUrl = `https://localhost:7152/api/objects/photo/${id}`
-                const dataObject = await fetchInfo(objectUrl)
+
+                const objectUrl = `https://localhost:7152/api/objects/${id}`;
+                const photoUrl = `https://localhost:7152/api/objects/photo/${id}`;
+                const dataObject = await fetchInfo(objectUrl);
                 setObject(dataObject);
-                const dataPhotos =await fetchInfo(photoUrl)
-                setPhotos(dataPhotos.map(photo => photo.imageUrl))
-                const address = `${dataObject.address.postalCode}+${dataObject.address.street}+${dataObject.address.city}+${dataObject.address.country}`
+                const dataPhotos = await fetchInfo(photoUrl);
+                setPhotos(dataPhotos.map(photo => photo.imageUrl));
+                const address = `${dataObject.address.postalCode}+${dataObject.address.street}+${dataObject.address.city}+${dataObject.address.country}`;
                 const result = await fetchBestPlacesNear(address);
                 const { lat, lng } = result.results[0].geometry.location;
                 const bestProposition = await fetchForRecomendation(lat, lng, "tourist_attraction");
-                setBestPlaces(bestProposition)
+                setBestPlaces(bestProposition);
                 const bestRestaurants = await fetchForRecomendation(lat, lng, "restaurant");
-                setRestaurant(bestRestaurants)
+                setRestaurant(bestRestaurants);
             } catch (er) {
                 console.error('Fetch error:', er);
             }
@@ -88,7 +97,7 @@ const Objects = () => {
                         const diffTime = Math.abs(endDate - startDate);
                         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
                         setDays(diffDays);
-                        setDates(selectedDates)
+                        setDates(selectedDates);
                     }
                 }
             });
@@ -101,22 +110,52 @@ const Objects = () => {
         }
     }, [object]);
 
+    const handleClick = () => {
+        setDateError('');
+        setGuestsError('');
+
+        if (!dates || dates.length !== 2) {
+            setDateError("Please select a valid date range.");
+            return;
+        }
+
+        if (!guests || isNaN(guests) || guests >=object.special.totalCapacity || guests <1 ) {
+            setGuestsError("Please enter a valid number of guests.");
+            return;
+        }
+
+        const items = object;
+        const address = items?.address;
+        const totalCount = items.price * days;
+        const service = totalCount * 0.01;
+        const totalSum = service + totalCount;
+        const totalAddress = `${address.postalCode} ${address.street} ${address.city} ${address.country}`;
+
+        Object.assign(object, {
+            totalprice: totalSum,
+            dates: dates,
+            guest: guests,
+            totalAddress: totalAddress,
+            charges: service,
+            totalCount: totalCount,
+            photos
+        });
+        const objectString = encodeURIComponent(JSON.stringify(object));
+        navigate(`/confirm?data=${objectString}`);
+    };
+
     if (!object) {
         return <div>Loading...</div>;
     }
-  
+    console.log(object)
     const items = object;
     const address = items?.address;
     const special = items?.special;
     const totalCount = items.price * days;
     const service = totalCount * 0.01;
     const totalSum = service + totalCount;
-    const totalAddress = `${address.postalCode} ${address.street} ${address.city} ${address.country}`
-    const handleClick = () => {
-        Object.assign(object, { totalprice:totalSum, dates: dates, guest: guests,totalAddress:totalAddress,charges:service,totalCount:totalCount, photos});
-        const objectString = encodeURIComponent(JSON.stringify(object));
-        navigate(`/confirm?data=${objectString}`);
-    };
+    const totalAddress = `${address.postalCode} ${address.street} ${address.city} ${address.country}`;
+
     return (
         <div className="container-object">
             <div className="container-img-pay-object">
@@ -124,17 +163,14 @@ const Objects = () => {
                     <div className="address-object">
                         <div className="name-object">{items.name}</div>
                         <div className="all-address-object">{totalAddress}</div>
-
-
                     </div>
                     <div className="div-image-object">
-                         {photos.length > 0 ? (
+                        {photos.length > 0 ? (
                             <PhotoCarousel images={photos} />
-                        ):(
-                         <div></div>   
+                        ) : (
+                            <div></div>
                         )}
                     </div>
-
                 </div>
 
                 <div className="payment-form-object">
@@ -143,15 +179,27 @@ const Objects = () => {
                         <div className="input-calendar-object">
                             <FaCalendarAlt className='calendar-object' />
                             <div className="inputs-object">
-                                <input type="text" className='find-date-object'    ref={dateRangeRef} placeholder="Check in - Check out" />
+                                <input
+                                    type="text"
+                                    className='find-date-object'
+                                    ref={dateRangeRef}
+                                    placeholder="Check in - Check out"
+                                />
                                 <p className="inputs-text-object">Check in - Check out</p>
+                               
                             </div>
                         </div>
                         <div className="input-people-object">
                             <MdPeopleOutline className='people-object' />
                             <div className="inputs-object">
-                                <input type="text"  onChange={(e) => setGuests(e.target.value)}  className='people-count-object' placeholder="Guests" />
+                                <input
+                                    type="text"
+                                    onChange={(e) => setGuests(e.target.value)}
+                                    className='people-count-object'
+                                    placeholder="Guests"
+                                />
                                 <p className="inputs-text-object">Guests</p>
+                               
                             </div>
                         </div>
                         {days && (
@@ -176,30 +224,14 @@ const Objects = () => {
                             </>
                         )}
                         <button className="proceed-object" onClick={handleClick}>Proceed</button>
+                        {dateError && <p className="error-message">{dateError}</p>}
+                        {guestsError && <p className="error-message">{guestsError}</p>}
                     </div>
-                    {/* <div className="weather-object-form">
-                    <div className="weather-object">9 C</div>
-                    <p className="weather-info-object">Moderate rain</p>
-                    <p className="weather-info-object">New York-Today</p>
-                        {Array(6).fill().map((_, index) => (
-                            <>
-                                
-                                    <hr className='hr-object'/>
-                                <div className="weather-block-object">
-                                    <p className="day-of-week-object">Tuesday</p>
-                                    <p className="day-temp-object">9</p>
-                                </div>
-                                
-                            </>
-                        ))}
-                    </div> */}
-
                 </div>
             </div>
-            {/* //вынести в отдельный компонент */}
+
             <div className="second-container-object">
                 <div className="block-container-object">
-
                     <div className="blockes-best">
                         <div className="block-best">
                             <TbBuildingSkyscraper className="icons-best" />
@@ -207,7 +239,7 @@ const Objects = () => {
                         </div>
                         <div className="block-best">
                             <LuBedDouble className="icons-best" />
-                            <p>{special.roomCount || 0} Capacity</p>
+                            <p>{special.totalCapacity || 0} Capacity</p>
                         </div>
                         <div className="block-best">
                             <LiaBathSolid className="icons-best" />
@@ -224,13 +256,10 @@ const Objects = () => {
                     {items.description}
                 </div>
 
-               
                 <PopularPlaces places={bestPlaces} />
                 <PopularPlaces places={bestRestaurant} type="restaurant" />
-
             </div>
         </div>
-
     );
 };
 
