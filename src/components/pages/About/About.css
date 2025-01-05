@@ -18,7 +18,7 @@
 }
 .main-info{
   display: flex;
-  margin-top: 50px;
+  padding-top: 50px;
   flex-direction: column;
 }
 .text{

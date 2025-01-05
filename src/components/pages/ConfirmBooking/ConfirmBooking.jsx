@@ -17,7 +17,6 @@ const ConfirmBookings = () => {
     const navigate = useNavigate(); 
     const [tonConnectUI] = useTonConnectUI();
     const [user, setUser] = useState(null);
-
     const location = useLocation();
     const params = new URLSearchParams(location.search);
     const objectString = params.get('data');
@@ -30,44 +29,42 @@ const ConfirmBookings = () => {
         return formatted.replace(',', '');
     };
     const newDate = myObject.dates.map(formatDate);
+    const startDate = new Date(newDate[0]);
+    const endDate = new Date(newDate[1]);
+    const differenceInMilliseconds = endDate - startDate;
+    const days = differenceInMilliseconds / (1000 * 60 * 60 * 24);
+    const nights = days - 1;
     const addNewForm = () => {
         setForms([...forms, forms.length + 1]);
     };
     useEffect(() => {
         const fetchUserData = async () => {
             try {
+                const isAuthenticated = await checkAuth();
+                if (!isAuthenticated) {
+                    console.error("User not authenticated, redirecting to login...");
+                    navigate("/login");
+                    return;
+                }
+        
                 const response = await fetch("https://localhost:7152/api/user/me", {
                     method: "GET",
                     credentials: "include",
                 });
-                 
-                
+        
                 if (!response.ok) {
                     console.error("Failed to fetch user data");
                     return;
                 }
-    
+        
                 const userData = await response.json();
-               setUser(userData)
+                setUser(userData);
                 console.log("User data:", userData);
             } catch (error) {
                 console.error("Error fetching user data:", error);
             }
         };
-    
-        const authenticateUser = async () => {
-            try {
-                const isAuthenticated = await checkAuth();
-                if (!isAuthenticated) {
-                    alert("You need to log in first!");
-                    navigate("/login");
-                }
-            } catch (authError) {
-                console.error("Authentication error:", authError);
-            }
-        };
-        authenticateUser();
-        fetchUserData();
+          fetchUserData()        
        
     }, [navigate]);
     
@@ -89,7 +86,6 @@ const ConfirmBookings = () => {
          const hexHash = Array.from(hashArray)
             .map(byte => byte.toString(16).padStart(2, '0'))
             .join('');
-    
         return {hexHash };
     };
     
@@ -112,9 +108,8 @@ const ConfirmBookings = () => {
     };
 
     const periodicallyCheckTransactionStatus = async (boc) => {
-        const maxAttempts = 20; 
+        const maxAttempts = 2; 
         const interval = 5000;  
-
         for (let attempt = 1; attempt <= maxAttempts; attempt++) {
             try {
                 const status = await checkTransactionStatus(boc);
@@ -124,7 +119,11 @@ const ConfirmBookings = () => {
                         date1:newDate[0],
                         date2:newDate[1],
                         userName:user.name,
-                        userSurname:user.surname
+                        userSurname:user.surname,
+                        userId:user.id,
+                        hash:boc,
+                        days,
+                        nights
                        
                     });
                     const objectString = encodeURIComponent(JSON.stringify(myObject));
@@ -156,6 +155,7 @@ const ConfirmBookings = () => {
                 throw new Error('BOC отсутствует в ответе');
             }
             const {hexHash } = await hashTransaction(result.boc);
+           // setHash(hexHash)
             console.log(hexHash)
             await periodicallyCheckTransactionStatus(hexHash);
         } catch (error) {
@@ -204,7 +204,7 @@ const ConfirmBookings = () => {
                                 <div className="count-object-confim">{myObject.guest} Guests</div>
                                 <div className="icon-and-desc-confirm">
                                     <GoSun className="icon-object-confirm" />
-                                    <div className="nights-object-confim"> 3 Nights - 4 Days</div>
+                                    <div className="nights-object-confim"> {nights} Nights - {days} Days</div>
                                 </div>
                             </div>
                         </div>

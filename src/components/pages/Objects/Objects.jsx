@@ -39,13 +39,7 @@ const Objects = () => {
                 const authenticateUser = async () => {
                     try {
                         const isAuthenticated = await checkAuth();
-                        const response = await fetch("https://localhost:7152/api/user/me", {
-                            method: "GET",
-                            credentials: "include",
-                        });
-                        const userData = await response.json();
-             //  setUser(userData)
-                console.log("User data:", userData);
+                        
                         if (!isAuthenticated) {
                             alert("You need to log in first!");
                             navigate("/login");
@@ -86,10 +80,34 @@ const Objects = () => {
 
     useEffect(() => {
         if (object && dateRangeRef.current) {
+            const bookedRanges = object.book.map(range => {
+                const from = new Date(range.dateIn);
+                const to = new Date(range.dateOut);
+                from.setDate(from.getDate() - 1);  
+                to.setDate(to.getDate() - 1);  
+                return { from, to };
+            });
+    
+            const availableRanges = object.availb.map(range => {
+                const from = new Date(range.dateIn)
+                const to = new Date(range.dateOut);
+                from.setDate(from.getDate() - 1);  
+                return { from, to };
+            });
+    
+            const disableDates = (date) => {
+                const isAvailable = availableRanges.some(range => {
+                    return date >= range.from && date <= range.to;
+                });
+                return !isAvailable;  
+            };
+    
             const calendar = flatpickr(dateRangeRef.current, {
                 mode: "range",
                 dateFormat: "Y-m-d",
-                minDate: Date.now(),
+               
+                disable: [disableDates, ...bookedRanges],  
+                minDate: "today",
                 onChange: (selectedDates) => {
                     if (selectedDates.length === 2) {
                         const startDate = selectedDates[0];
@@ -99,16 +117,18 @@ const Objects = () => {
                         setDays(diffDays);
                         setDates(selectedDates);
                     }
-                }
+                },
             });
-
+    
             return () => {
-                if (calendar && typeof calendar.destroy === 'function') {
+                if (calendar && typeof calendar.destroy === "function") {
                     calendar.destroy();
                 }
             };
         }
     }, [object]);
+    
+    
 
     const handleClick = () => {
         setDateError('');

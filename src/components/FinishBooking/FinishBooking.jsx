@@ -1,4 +1,4 @@
- import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { FaUser } from "react-icons/fa";
@@ -7,7 +7,6 @@ import { BiDollar } from "react-icons/bi";
 import { IoPeople, IoTimeOutline } from "react-icons/io5";
 
 import './FinishBooking.css';
-
 
 const InfoBlock = ({ icon, label, value }) => (
     <div className="info-container-finish">
@@ -20,15 +19,64 @@ const InfoBlock = ({ icon, label, value }) => (
 );
 
 const FinishBooking = () => {
-    
-    const location = useLocation()
-    const navigate = useNavigate()
+    const location = useLocation();
+    const navigate = useNavigate();
 
     const params = new URLSearchParams(location.search);
     const objectString = params.get('data');
     const myObject = JSON.parse(decodeURIComponent(objectString));
 
-    console.log(myObject); 
+    const [isBooked, setIsBooked] = useState(false);
+    const [isRequestSent, setIsRequestSent] = useState(false); // Новый флаг для предотвращения повторного запроса
+
+    const data = useMemo(() => ({
+        objectId: myObject.id,
+        userId: myObject.userId,
+        ownerId: myObject.ownerId,
+        objectType: myObject.objectType,
+        dateIn: myObject.date1,
+        dateOut: myObject.date2,
+        totalSum: myObject.totalprice,
+        days: myObject.days,
+        night: myObject.nights,
+        hash: myObject.hash,
+        paymentMethod: myObject.paymentMethod,
+        guest: myObject.guest
+    }), [myObject]);
+
+    useEffect(() => {
+        if (isRequestSent || isBooked) return; // Предотвращаем повторную отправку
+
+        const bookTrip = async () => {
+            try {
+                console.log('Sending booking data:', data);
+                const response = await fetch('https://localhost:7152/api/objects/book', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: "include",
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                console.log(result);
+
+                if (response.ok) {
+                    setIsBooked(true);
+                } else {
+                    console.error("Ошибка при создании бронирования", result);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            } finally {
+                setIsRequestSent(true); // Флаг запроса устанавливается в любом случае
+            }
+        };
+
+        bookTrip();
+    }, [data, isRequestSent, isBooked]);
+
     const infoPart1 = [
         { icon: <FaUser className="icon-finish"/>, label: "Booked by:", value: myObject.userName + " " + myObject.userSurname },
         { icon: <BsWallet2 className="icon-finish"/>, label: "Payment Method:", value: myObject.paymentMethod },
@@ -74,11 +122,11 @@ const FinishBooking = () => {
                     </div>
                 </div>
                 <div className="btn-div-finish">
-                <button className="button-finish">Ok</button>
+                    <button className="button-finish">Ok</button>
                 </div>
 
-                </div>
             </div>
+        </div>
     );
 };
 
