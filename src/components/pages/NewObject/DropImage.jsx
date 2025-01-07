@@ -55,23 +55,7 @@ const ImageUploader = ({onFilesChange }) => {
         
       </div>
 
-      <div style={{ display: 'flex', flexWrap: 'wrap', marginTop: '20px' }}>
-        {files.map((file, index) => (
-          <div key={index} style={{ marginRight: '10px', textAlign: 'center' }}>
-            <img
-              src={file.preview}
-              alt="Preview"
-              style={{
-                width: '100px',
-                height: '100px',
-                objectFit: 'cover',
-                borderRadius: '8px',
-              }}
-            />
-            <p style={{ fontSize: '12px' }}>{file.name}</p>
-          </div>
-        ))}
-      </div>
+      
     </div>
   );
 };

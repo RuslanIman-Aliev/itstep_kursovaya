@@ -114,6 +114,18 @@
     box-sizing: border-box;  
     margin: 0;
 }
+.input-style-add{
+    border: rgb(204, 204, 204) 0.5px solid;
+    font-size: 16px;
+    padding: 1px 10px;
+    border-radius: 10px;
+    width: 400px;
+}
+.new-availabilities-add{
+    display: flex;
+    flex-direction: column;
+}
+
 .map-form-add{
     padding: 30px 0px;
 }
@@ -148,4 +160,22 @@
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     gap: 20px;
+}
+.button-object-add{
+    display: flex;
+    justify-content: end;
+}
+.object-add {
+    width: 15%;
+    height: 25px;
+    padding: 16px 25px;
+    background-color: rgb(81, 67, 217);
+    border-radius: 20px;
+    color: white;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+    display: flex;
+    justify-content: center;   
+    align-items: center;     
 }

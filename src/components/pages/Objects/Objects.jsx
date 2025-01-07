@@ -19,9 +19,9 @@ import { fetchInfo } from '../../../api/fetchApi';
 import { checkAuth } from '../Auth/CheckAuth';
 
 
-const Objects = () => {
+const Objects = (formData ) => {
     const { id } = useParams();
-    const [object, setObject] = useState(null);
+    const [object, setObject] = useState(formData||[]);
     const [days, setDays] = useState(0);
     const [bestPlaces, setBestPlaces] = useState([]);
     const [bestRestaurant, setRestaurant] = useState([]);
@@ -32,10 +32,14 @@ const Objects = () => {
     const [dateError, setDateError] = useState('');
     const [guestsError, setGuestsError] = useState('');
     const navigate = useNavigate();
-
+    
+    console.log(formData)
     useEffect(() => {
         const fetchData = async () => {
+            console.log("gj")
+            if(!Object.keys(formData).length === 0) return
             try {
+                 console.log("dsd")
                 const authenticateUser = async () => {
                     try {
                         const isAuthenticated = await checkAuth();
@@ -53,6 +57,7 @@ const Objects = () => {
 
                 const objectUrl = `https://localhost:7152/api/objects/${id}`;
                 const photoUrl = `https://localhost:7152/api/objects/photo/${id}`;
+                console.log("HEre")
                 const dataObject = await fetchInfo(objectUrl);
                 setObject(dataObject);
                 const dataPhotos = await fetchInfo(photoUrl);
@@ -79,16 +84,16 @@ const Objects = () => {
     }, [id]);
 
     useEffect(() => {
-        if (object && dateRangeRef.current) {
-            const bookedRanges = object.book.map(range => {
+        if (object.book && dateRangeRef.current) {
+            const bookedRanges = object?.book?.map(range => {
                 const from = new Date(range.dateIn);
                 const to = new Date(range.dateOut);
                 from.setDate(from.getDate() - 1);  
                 to.setDate(to.getDate() - 1);  
                 return { from, to };
             });
-    
-            const availableRanges = object.availb.map(range => {
+            
+            const availableRanges = object?.availb?.map(range => {
                 const from = new Date(range.dateIn)
                 const to = new Date(range.dateOut);
                 from.setDate(from.getDate() - 1);  
@@ -96,7 +101,7 @@ const Objects = () => {
             });
     
             const disableDates = (date) => {
-                const isAvailable = availableRanges.some(range => {
+                const isAvailable = availableRanges?.some(range => {
                     return date >= range.from && date <= range.to;
                 });
                 return !isAvailable;  
@@ -106,7 +111,7 @@ const Objects = () => {
                 mode: "range",
                 dateFormat: "Y-m-d",
                
-                disable: [disableDates, ...bookedRanges],  
+                disable: [disableDates, ...bookedRanges ],  
                 minDate: "today",
                 onChange: (selectedDates) => {
                     if (selectedDates.length === 2) {
@@ -139,18 +144,18 @@ const Objects = () => {
             return;
         }
 
-        if (!guests || isNaN(guests) || guests >=object.special.totalCapacity || guests <1 ) {
+        if (!guests || isNaN(guests) || guests >=object?.special?.totalCapacity || guests <1 ) {
             setGuestsError("Please enter a valid number of guests.");
             return;
         }
 
         const items = object;
         const address = items?.address;
-        const totalCount = items.price * days;
+        const totalCount = items?.price * days;
         const service = totalCount * 0.01;
         const totalSum = service + totalCount;
-        const totalAddress = `${address.postalCode} ${address.street} ${address.city} ${address.country}`;
-
+        const totalAddress = `${address?.postalCode} ${address?.street} ${address?.city} ${address?.country}`;
+        console.log(totalAddress)
         Object.assign(object, {
             totalprice: totalSum,
             dates: dates,
@@ -171,24 +176,28 @@ const Objects = () => {
     const items = object;
     const address = items?.address;
     const special = items?.special;
-    const totalCount = items.price * days;
+    const totalCount = items?.price * days;
     const service = totalCount * 0.01;
     const totalSum = service + totalCount;
-    const totalAddress = `${address.postalCode} ${address.street} ${address.city} ${address.country}`;
+    const totalAddress = `${address?.postalCode} ${address?.street} ${address?.city} ${address?.country}`;
+    const formAddress = `${formData?.formData?.postalCode} ${formData?.formData?.street} ${formData?.formData?.city} ${formData?.formData?.country}`
+    const imageUrls = formData?.formData?.image?.map(item => item.preview) || [];
+    console.log(imageUrls)
 
     return (
         <div className="container-object">
             <div className="container-img-pay-object">
                 <div className="address-photo-object">
                     <div className="address-object">
-                        <div className="name-object">{items.name}</div>
-                        <div className="all-address-object">{totalAddress}</div>
+                        <div className="name-object">{items?.name || formData?.formData?.name}</div>
+                        <div className="all-address-object">   {(formAddress && !formAddress.includes("undefined undefined ")) ? formAddress : totalAddress}
+                        </div>
                     </div>
                     <div className="div-image-object">
-                        {photos.length > 0 ? (
+                        {photos?.length > 0 ? (
                             <PhotoCarousel images={photos} />
                         ) : (
-                            <div></div>
+                            <PhotoCarousel images={imageUrls} />
                         )}
                     </div>
                 </div>
@@ -226,7 +235,7 @@ const Objects = () => {
                             <>
                                 <div className="price-block-object">
                                     <div className="calculate-sum-object">
-                                        {items.price}$ x {days} night
+                                        {items?.price || formData?.formData?.price}$ x {days} night
                                     </div>
                                     <div className="calculated-object">
                                         {totalCount}$
@@ -243,7 +252,14 @@ const Objects = () => {
                                 </div>
                             </>
                         )}
-                        <button className="proceed-object" onClick={handleClick}>Proceed</button>
+                        {
+                           !Object.keys(formData).length === 0 ? (
+                            <button className="proceed-object" onClick={handleClick} disabled={true}>Proceed</button>
+                        ) : (
+                            <button className="proceed-object" onClick={handleClick} disabled={false}>Proceed</button>
+                        )
+
+                        }
                         {dateError && <p className="error-message">{dateError}</p>}
                         {guestsError && <p className="error-message">{guestsError}</p>}
                     </div>
@@ -255,25 +271,25 @@ const Objects = () => {
                     <div className="blockes-best">
                         <div className="block-best">
                             <TbBuildingSkyscraper className="icons-best" />
-                            <p>{special.roomCount || 0} Room</p>
+                            <p>{special?.roomCount || formData?.formData?.roomCount} Room</p>
                         </div>
                         <div className="block-best">
                             <LuBedDouble className="icons-best" />
-                            <p>{special.maxPeopleCapacity || 0} Capacity</p>
+                            <p>{special?.maxPeopleCapacity || formData?.formData?.maxCapacity} Capacity</p>
                         </div>
                         <div className="block-best">
                             <LiaBathSolid className="icons-best" />
-                            <p>{special.toiletCount || 0} Bath</p>
+                            <p>{special?.toiletCount || formData?.formData?.toiletCount} Bath</p>
                         </div>
                         <div className="block-best">
                             <BsArrowsMove className="icons-best" />
-                            <p>{items.square || 0} Square</p>
+                            <p>{items?.square || formData?.formData?.square} Square</p>
                         </div>
                     </div>
                 </div>
 
                 <div className="description-object">
-                    {items.description}
+                    {items?.description || formData?.formData?.description}
                 </div>
 
                 <PopularPlaces places={bestPlaces} />
