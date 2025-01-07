@@ -1,0 +1,151 @@
+.main-container-add{
+    width: 85%;
+    margin: 20px auto;
+}
+.header-add{
+    text-align: center;
+    margin-bottom: 0px;
+    font-family: Poppins, sans-serif;
+    font-size: 48px;
+}
+.small-text-add{
+    text-align: center;
+    color: rgb(116, 117, 121);
+    font-size: 20px;
+    font-family: "DM Sans", sans-serif;
+}
+.button-add{
+    background-color: rgb(81, 67, 217);
+    border-radius: 100%;
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding: 15px 22px;
+    font-size: 20px;
+    
+}
+.info-add{
+    color: rgb(81, 67, 217);
+    padding: 10px;
+    font-weight: 500;
+    width: 200px;
+    text-align: center;
+}
+.button1-add{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+.buttons-container-add{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 30px;
+    
+}
+.hr-add{
+    width: 50%; height: 2px; background-color: #ccc; border: none;
+    margin-top: 25px;
+}
+.header-form-add{
+    margin-bottom: 0px;
+    font-family: Poppins, sans-serif;
+    font-size: 28px;
+    margin: 20px 0px;
+}
+.form-add{
+    padding: 20px 20px;
+    padding-bottom: 30px;
+    background-color: white;
+    border-radius: 20px;
+}
+.form-info-add{
+    margin-bottom: 0px;
+    font-family: Poppins, sans-serif;
+    font-size: 20px;
+   padding-bottom: 20px;
+    border-bottom: lightgrey 1px solid;
+}
+.input-add,.select-add{
+    width: 100%;
+    padding: 8px 16px;
+    border: rgb(204, 204, 204) 0.5px solid;
+    font-size: 16px;
+    border-radius: 10px;
+}
+.input-line1-add{
+    border-radius: 20px;
+}
+.input-add{
+    box-sizing: border-box;  
+    margin: 0;}
+.text-input-add{
+    padding-top: 20px;
+    padding-bottom: 10px;
+    color: rgb(133, 135, 138);
+    font-family: "DM Sans", sans-serif;
+    font-size: 16px;
+}
+.form-location-add{
+    margin-top: 50px;
+    padding: 20px;
+    background-color: white;
+    border-radius: 20px;
+
+}
+.block-add{
+    width: 50%;
+}
+.input-select-add{
+    width: 100%;
+}
+.line1-add{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    gap: 30px;
+}
+.input-line1-add{
+    width: 100%;
+    padding: 9px 16px;
+    border: rgb(204, 204, 204) 0.5px solid;
+    font-size: 16px;
+    border-radius: 10px;
+    box-sizing: border-box;  
+    margin: 0;
+}
+.map-form-add{
+    padding: 30px 0px;
+}
+.upload-image-add{
+    margin-top: 50px;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    
+}
+.textarea-add{
+    resize: vertical
+}
+.container-description-add{
+    background-color: white;
+    padding: 20px;
+    border-radius: 20px;
+    margin-top: 30px;
+}
+.container-form2-add{
+    padding: 20px;
+    background-color: white;
+}
+.container-about-add{
+    margin-top: 50px;
+    background-color: white;
+    padding: 20px;
+    border-radius: 20px;
+
+}
+.main-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+}

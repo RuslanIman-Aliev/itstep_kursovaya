@@ -11,6 +11,7 @@ import FindObjects from './components/pages/FindObjects/FindObjects';
 import ConfirmBookings from './components/pages/ConfirmBooking/ConfirmBooking';
 import FinishBooking from './components/FinishBooking/FinishBooking';
 import NavBars from './components/layouts/NavBars/NavBars';
+import NewObject from './components/pages/NewObject/NewObject';
   
 function App() {
   return (
@@ -26,10 +27,12 @@ function App() {
               path="/"
               element={
                 <PageWithNavBars>
-                  <About />
+                  {/* <About />
                   <Info />
-                  <BestProposition />
+                  <BestProposition /> */}
+                  <NewObject/>
                 </PageWithNavBars>
+                
               }
             />
             <Route
