@@ -58,7 +58,7 @@ const BestProposition = () => {
                                 </div>
                                 <div className="block-best">
                                     <LuBedDouble className="icons-best" />
-                                    <p>{special.totalCapacity || 0} Capacity</p>
+                                    <p>{special.maxPeopleCapacity || 0} Capacity</p>
                                 </div>
                                 <div className="block-best">
                                     <LiaBathSolid className="icons-best" />
