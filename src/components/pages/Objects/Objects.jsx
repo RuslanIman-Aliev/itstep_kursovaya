@@ -30,18 +30,29 @@ const Objects = (formData ) => {
     const [dates, setDates] = useState('');
     const [guests, setGuests] = useState('');
     const [dateError, setDateError] = useState('');
+    const [user,setUser] = useState('')
     const [guestsError, setGuestsError] = useState('');
+    const [isUserObj,setUserObj] = useState(false)
     const navigate = useNavigate();
-    
     console.log(formData)
     useEffect(() => {
         const fetchData = async () => {
-            console.log("gj")
             if(!Object.keys(formData).length === 0) return
             try {
-                 console.log("dsd")
                 const authenticateUser = async () => {
                     try {
+                        const response = await fetch("https://localhost:7152/api/user/me", {
+                            method: "GET",
+                            credentials: "include",
+                        });
+                
+                        if (!response.ok) {
+                            console.error("Failed to fetch user data");
+                            return;
+                        }
+                
+                        const userData = await response.json();
+                        setUser(userData);
                         const isAuthenticated = await checkAuth();
                         
                         if (!isAuthenticated) {
@@ -84,6 +95,16 @@ const Objects = (formData ) => {
     }, [id]);
 
     useEffect(() => {
+        if (user?.id === object?.ownerId) {
+            setUserObj(true);
+        }
+        if(user?.id !== object?.ownerId) {
+            setUserObj(false);
+        }
+    }, [user, object]);
+    
+    useEffect(() => {
+        
         if (object.book && dateRangeRef.current) {
             const bookedRanges = object?.book?.map(range => {
                 const from = new Date(range.dateIn);
@@ -133,8 +154,7 @@ const Objects = (formData ) => {
         }
     }, [object]);
     
-    
-
+   
     const handleClick = () => {
         setDateError('');
         setGuestsError('');
@@ -148,8 +168,8 @@ const Objects = (formData ) => {
             setGuestsError("Please enter a valid number of guests.");
             return;
         }
-
-        const items = object;
+       
+         const items = object;
         const address = items?.address;
         const totalCount = items?.price * days;
         const service = totalCount * 0.01;
@@ -172,6 +192,8 @@ const Objects = (formData ) => {
     if (!object) {
         return <div>Loading...</div>;
     }
+     
+    
     console.log(object)
     const items = object;
     const address = items?.address;
@@ -189,17 +211,33 @@ const Objects = (formData ) => {
             <div className="container-img-pay-object">
                 <div className="address-photo-object">
                     <div className="address-object">
+                        <div>{isUserObj &&(
+                            <div className="is-user-object">Your object</div>
+                        )}</div>
                         <div className="name-object">{items?.name || formData?.formData?.name}</div>
                         <div className="all-address-object">   {(formAddress && !formAddress.includes("undefined undefined ")) ? formAddress : totalAddress}
                         </div>
                     </div>
                     <div className="div-image-object">
-                        {photos?.length > 0 ? (
+                        {photos?.length > 1 && (
                             <PhotoCarousel images={photos} />
-                        ) : (
-                            <PhotoCarousel images={imageUrls} />
-                        )}
+                        ) }
+                        { imageUrls?.length >1 &&
+                            (
+                                <PhotoCarousel images={imageUrls} />
+                            )
+                        }
+                        {photos?.length == 1 && (
+                            <img  className="image-object" src={photos} />
+                        )
+                        }
+                        {imageUrls?.length == 1 && (
+                            <img  className="image-object" src={photos} />
+                        )
+                        }
+                       
                     </div>
+                    
                 </div>
 
                 <div className="payment-form-object">
@@ -253,8 +291,8 @@ const Objects = (formData ) => {
                             </>
                         )}
                         {
-                           !Object.keys(formData).length === 0 ? (
-                            <button className="proceed-object" onClick={handleClick} disabled={true}>Proceed</button>
+                           !Object.keys(formData).length === 0 || isUserObj ? (
+                            <button className="proceed-object" onClick={handleClick} disabled={true}>It's your object</button>
                         ) : (
                             <button className="proceed-object" onClick={handleClick} disabled={false}>Proceed</button>
                         )
