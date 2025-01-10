@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import flatpickr from "flatpickr";
 import { navigate } from 'react-router-dom';
-import mainBackground from '../../../img/AboutImages/mainbackground.png';
+import { BlobServiceClient } from "@azure/storage-blob";
 import "flatpickr/dist/flatpickr.min.css";
 import './Objects.css'
 import { TbBuildingSkyscraper } from "react-icons/tb";
@@ -37,7 +37,15 @@ const Objects = (formData ) => {
     console.log(formData)
     useEffect(() => {
         const fetchData = async () => {
-            if(!Object.keys(formData).length === 0) return
+            console.log("fd")
+            if (formData && Object.keys(formData).length > 0) {
+                return
+                
+            }
+
+            if (Object.keys(formData).length !== 0) {
+                return;
+            }
             try {
                 const authenticateUser = async () => {
                     try {
@@ -72,10 +80,10 @@ const Objects = (formData ) => {
                 const dataObject = await fetchInfo(objectUrl);
                 setObject(dataObject);
                 const dataPhotos = await fetchInfo(photoUrl);
-                setPhotos(dataPhotos.map(photo => photo.imageUrl));
-                const address = `${dataObject.address.postalCode}+${dataObject.address.street}+${dataObject.address.city}+${dataObject.address.country}`;
+                setPhotos(dataPhotos?.map(photo => photo?.imageUrl));
+                const address = `${dataObject?.address?.postalCode}+${dataObject?.address?.street}+${dataObject?.address?.city}+${dataObject?.address?.country}`;
                 const result = await fetchBestPlacesNear(address);
-                const { lat, lng } = result.results[0].geometry.location;
+                const { lat, lng } = result?.results[0]?.geometry.location;
                 const bestProposition = await fetchForRecomendation(lat, lng, "tourist_attraction");
                 setBestPlaces(bestProposition);
                 const bestRestaurants = await fetchForRecomendation(lat, lng, "restaurant");
@@ -105,8 +113,8 @@ const Objects = (formData ) => {
     
     useEffect(() => {
         
-        if (object.book && dateRangeRef.current) {
-            const bookedRanges = object?.book?.map(range => {
+        if (object.bookings && dateRangeRef.current) {
+            const bookedRanges = object?.bookings?.map(range => {
                 const from = new Date(range.dateIn);
                 const to = new Date(range.dateOut);
                 from.setDate(from.getDate() - 1);  
@@ -114,7 +122,7 @@ const Objects = (formData ) => {
                 return { from, to };
             });
             
-            const availableRanges = object?.availb?.map(range => {
+            const availableRanges = object?.availabilities?.map(range => {
                 const from = new Date(range.dateIn)
                 const to = new Date(range.dateOut);
                 from.setDate(from.getDate() - 1);  

@@ -12,6 +12,8 @@ import ConfirmBookings from './components/pages/ConfirmBooking/ConfirmBooking';
 import FinishBooking from './components/FinishBooking/FinishBooking';
 import NavBars from './components/layouts/NavBars/NavBars';
 import NewObject from './components/pages/NewObject/NewObject';
+import UserActions from './components/pages/UserActions/UserActions';
+import BookingsTable from './components/pages/UserActions/BookingTable';
   
 function App() {
   return (
@@ -29,7 +31,17 @@ function App() {
                 <PageWithNavBars>
                   {/* <About />
                   <Info />
-                  <BestProposition /> */}
+                  <BestProposition />    */}
+                  {/* <UserActions/> */}
+                  <BookingsTable/>
+                </PageWithNavBars>
+                
+              }
+            />
+             <Route
+              path="/add"
+              element={
+                <PageWithNavBars>
                   <NewObject/>
                 </PageWithNavBars>
                 

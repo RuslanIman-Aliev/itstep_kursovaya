@@ -17,7 +17,6 @@ const PhotoCarousel = ({ images }) => {
         nextArrow: <button className="slick-next">→</button>,
         prevArrow: <button className="slick-prev">←</button>,
     };
-
     const openModal = (index) => {
         setCurrentImageIndex(index);
         setIsModalOpen(true);
@@ -30,7 +29,7 @@ const PhotoCarousel = ({ images }) => {
     return (
         <div className="photo-carousel">
             <Slider {...settings}>
-                {images.map((image, index) => (
+                {images?.map((image, index) => (
                     <div key={index} className="carousel-image-wrapper">
                         <img
                             src={image}

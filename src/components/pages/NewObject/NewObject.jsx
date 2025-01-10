@@ -7,8 +7,19 @@ import ImageUploader from './DropImage';
 import "flatpickr/dist/flatpickr.min.css";
 import './NewObject.css';
 import Objects from '../Objects/Objects';
+import { useNavigate } from 'react-router-dom';
 
-
+const SuccessModal = ({ onClose }) => {
+    return (
+        <div className="modal-overlay">
+            <div className="modal">
+                <h3>Success!</h3>
+                <p>Your object was successfuly added.</p>
+                <button onClick={onClose}>Close</button>
+            </div>
+        </div>
+    );
+};
 const NewObject = () => {
 
     const optionsForPage1 = countryList().getData();
@@ -29,7 +40,7 @@ const NewObject = () => {
         'streetNumber',
         'postalCode',
     ];
-     const inputFields = {
+    const inputFields = {
         House: [
             { label: "Max People Capacity *", placeholder: "Max People Capacity", name: 'maxCapacity' },
             { label: "Toilet Count *", placeholder: "Toilet Count", name: 'toiletCount' },
@@ -38,7 +49,9 @@ const NewObject = () => {
             { label: "Floor *", placeholder: "Floor", name: 'floor' },
             { label: "Total Square *", placeholder: "Total Square", name: 'square' },
             { label: "Room Count *", placeholder: "Room Count", name: 'roomCount' },
-            { label: "How To Get Key *", placeholder: "How To Get Key", name: 'key' },
+            { label: "How To Get Key *", placeholder: "How To Get Key", name: 'GetKey' },
+            { label: "Float Count *", placeholder: "Float Count", name: 'floatCount' },
+
         ],
         Flat: [
             { label: "Max People Capacity *", placeholder: "Max People Capacity", name: 'maxCapacity' },
@@ -48,8 +61,9 @@ const NewObject = () => {
             { label: "Floor *", placeholder: "Floor", name: 'floor' },
             { label: "Total Square *", placeholder: "Total Square", name: 'square' },
             { label: "Room Count *", placeholder: "Room Count", name: 'roomCount' },
-            { label: "How To Get Key *", placeholder: "How To Get Key", name: 'key' },
+            { label: "How To Get Key *", placeholder: "How To Get Key", name: 'GetKey' },
             { label: "Flat Number *", placeholder: "Flat Number", name: 'flatNumber' },
+            { label: "Door Code *", placeholder: "Door Code", name: 'doorCode' },
 
         ],
         Hotel: [
@@ -83,8 +97,9 @@ const NewObject = () => {
     const [formData, setFormData] = useState({});
     const [images, setImages] = useState([]);
     const [selectedAmenities, setSelectedAmenities] = useState([]);
-    const [forms, setForms] = useState([0]);
-
+    const [forms, setForms] = useState([]);
+    const [modalVisible, setModalVisible] = useState(false);
+    const navigate = useNavigate()
     const handleDateChange = (value, index) => {
         const formatLocalDate = (date) => {
             const year = date.getFullYear();
@@ -169,19 +184,19 @@ const NewObject = () => {
             }
             return file;
         });
-    
+
         setImages(updatedImages);
-    
+
         const data = new FormData();
         updatedImages.forEach((image, index) => {
             data.append(`image_${index}`, image.file);
         });
-    
+
         handleChange("image", updatedImages);
     };
-    
+
     const isFormValid = () => {
-       
+
         const data = new FormData();
         Object.entries(formData).forEach(([key, value]) => {
             if (typeof value === 'string' || typeof value === 'number') {
@@ -238,7 +253,6 @@ const NewObject = () => {
             if (isInputValid()) {
                 console.log("Данные отправлены", formData);
                 setNumber(52);
-                // <Objects formData={formData}/>
             } else {
                 console.log("Validation failed. Missing fields:", requiredFields2.filter(
                     field => !formData[field] || formData[field].toString().trim() === ''
@@ -247,25 +261,97 @@ const NewObject = () => {
             }
         }
     }
+    const getSasUrl = async (blobName) => {
+        try {
+            const response = await fetch(`https://localhost:7152/api/objects/generate-sas-url?blobName=${blobName}`);
+            const data = await response.json();
 
-    // const handleSubmit = () => {
-    //     const data = new FormData();
+            if (response.ok) {
+                return data.sasUrl;
+            } else {
+                console.error("Ошибка при получении SAS URL:", data.message);
+                return null;
+            }
+        } catch (error) {
+            console.error("Ошибка при вызове API:", error);
+        }
+    };
+    const sendObjectHandler = async () => {
+        const response = await fetch("https://localhost:7152/api/user/me", {
+            method: "GET",
+            credentials: "include",
+        });
 
-    //     Object.entries(formData).forEach(([key, value]) => {
-    //         if (Array.isArray(value) && typeof value[0] === "object") {
-    //             data.append(key, JSON.stringify(value));
-    //         }
-    //         else {
-    //             data.append(key, value);
-    //         }
-    //     });
+        if (!response.ok) {
+            console.error("Failed to fetch user data");
+            return;
+        }
 
-    //     images.forEach((image, index) => {
-    //         data.append(`image_${index}`, image);
-    //     });
+        const userData = await response.json();
+        formData.ownerId = userData.id
+        const uploadImagesToAzure = async (images) => {
+            const uploadedUrls = [];
 
-    //     console.log([...data.entries()]);
-    // };
+            for (const image of images) {
+                const file = image.file || image; // Извлечение файла из объекта
+                const blobName = `${Date.now()}-${file.name}`;
+
+                // Получаем SAS URL с бэкенда
+                const sasUrl = await getSasUrl(encodeURIComponent(blobName));
+                if (!sasUrl) {
+                    console.error("Не удалось получить SAS URL для файла", file.name);
+                    continue;
+                }
+
+                try {
+                    const response = await fetch(sasUrl, {
+                        method: "PUT",
+                        headers: {
+                            "x-ms-blob-type": "BlockBlob",
+                        },
+                        body: file,
+                    });
+
+                    if (response.ok) {
+                        uploadedUrls.push(sasUrl.split("?")[0]);
+                    } else {
+                        console.error("Ошибка при загрузке файла на Azure", file.name);
+                    }
+                } catch (error) {
+                    console.error("Ошибка при загрузке файла:", file.name, error);
+                }
+            }
+
+            return uploadedUrls;
+        };
+
+        const images = formData?.image;
+        const uploadedImageUrls = await uploadImagesToAzure(images);
+        formData.imageUrls = uploadedImageUrls;
+        console.log(formData)
+        fetch('https://localhost:7152/api/objects/add', {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+            if(response.ok){
+                setModalVisible(true); 
+                navigate('/')
+            }
+
+        console.log(formData);
+        return;
+    }
     const filteredAmenities = formData.listingType
         ? optionsForPage2.filter(
             (option) => option.category === formData.listingType || option.category === ''
@@ -292,6 +378,7 @@ const NewObject = () => {
 
     return (
         <div className="main-container-add">
+             {modalVisible && <SuccessModal onClose={() => setModalVisible(false)} />}
             <div className="header-add">
                 <h2 className="header-add">Add New Listing</h2>
             </div>
@@ -401,22 +488,22 @@ const NewObject = () => {
                         <ImageUploader onFilesChange={handleImageUpload}
                         />
                         <div style={{ display: 'flex', flexWrap: 'wrap', marginTop: '20px' }}>
-        {images.map((file, index) => (
-          <div key={index} style={{ marginRight: '10px', textAlign: 'center' }}>
-            <img
-              src={file.preview}
-              alt="Preview"
-              style={{
-                width: '100px',
-                height: '100px',
-                objectFit: 'cover',
-                borderRadius: '8px',
-              }}
-            />
-            <p style={{ fontSize: '12px' }}>{file.name}</p>
-          </div>
-        ))}
-      </div>
+                            {images.map((file, index) => (
+                                <div key={index} style={{ marginRight: '10px', textAlign: 'center' }}>
+                                    <img
+                                        src={file.preview}
+                                        alt="Preview"
+                                        style={{
+                                            width: '100px',
+                                            height: '100px',
+                                            objectFit: 'cover',
+                                            borderRadius: '8px',
+                                        }}
+                                    />
+                                    <p style={{ fontSize: '12px' }}>{file.name}</p>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
             )}
@@ -471,15 +558,21 @@ const NewObject = () => {
                         </a>
 
                         <div className="new-availabilities-add">
-                            
+
                             {forms.length > 0 && forms.map((_, index) => (
-                                
+
                                 <div className="input-new-add" key={index}>
                                     <div className="text-input-add">Availabilities *</div>
                                     <input
                                         type="text"
                                         className="find-date input-style input-style-add"
                                         id={`date-range-${index}`}
+                                        value={
+                                            formData.book?.[index]
+                                                ? `${formData.book[index].dateIn ? formData.book[index].dateIn + " to " : ""}${formData.book[index].dateOut || ""}`
+                                                : ""
+
+                                        }
                                     />
                                 </div>
                             ))}
@@ -493,11 +586,11 @@ const NewObject = () => {
                 <div className="main-cont">
                     <Objects formData={formData} />
                     <div className="button-object-add">
-                        <button className='object-add'>Add</button>
+                        <button className='object-add' onClick={sendObjectHandler}>Add</button>
                     </div>
                 </div>
             )}
-            
+
         </div>
     );
 };

@@ -6,18 +6,19 @@ import { LuBedDouble } from "react-icons/lu";
 import { LiaBathSolid } from "react-icons/lia";
 import { BsArrowsMove } from "react-icons/bs";
 import './BestProposition.css'
+import PhotoCarousel from '../PhotoCarousel/PhotoCarousel';
 
 const BestProposition = () => {
     const [data, setData] = useState(null);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
-    const [photo, setPhoto] = useState("https://bookingimages.blob.core.windows.net/images-container/18.jpg");
     useEffect(() => {
         const loadData = async () => {
             try {
                 const result = await fetchBestProporties(); 
                 console.log(result);
-                setData(result);
+                
+                setData(result.slice(0, 6));
                 
             } catch (err) {
                 setError(err.message);
@@ -43,11 +44,20 @@ const BestProposition = () => {
                 items.map((item) => {
                     const address = item.address || {};
                     const special = item.special || {};
+                    const photos = item.photos
+                    console.log(photos)
 
                     return (
                         <div className="card-best" key={item.id}>  
                             <div className="div-card-best">
-                                <img src={photo} alt="" className="image-card" />
+                                { photos.length >1 ?(
+                                   
+                                <PhotoCarousel images={photos} className="image-card" />
+                                    
+                                ):(
+                                    <img src={photos} alt="" className="image-card"/>
+                                )
+                                }
                             </div>
                             <div className="index-best">{address.postalCode || 'N/A'}</div>
                             <div className="adress-best">{address.street || 'No Street'}, {address.city || 'No City'}</div>

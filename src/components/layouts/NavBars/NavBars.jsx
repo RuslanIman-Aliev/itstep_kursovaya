@@ -68,7 +68,7 @@ const NavBars = () => {
             <div className="menu">
                 <ul className="menuList">
                     <li><a href="">MyLogoandSiteName</a></li>
-                    <li><a href="">Home</a></li>
+                    <li onClick={()=> navigate("/")}><a href="">Home</a></li>
                     <li><a href="">Book places</a></li>
                     <li><a href="">Contact</a></li>
                     <ul className="listUser">
@@ -92,6 +92,7 @@ const NavBars = () => {
                                     <div className="dropdown-menu">
                                         <ul>
                                             <li><a href="/profile">My Objects</a></li>
+                                            <li onClick={()=> navigate("/add")}><a>Add objects</a></li>
                                             <li><a href="/bookings">My Bookings</a></li>
                                             <li><a href="/settings">My Favorites</a></li>
                                             <li><a href="/help">Help Center</a></li>

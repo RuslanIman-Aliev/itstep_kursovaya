@@ -1,0 +1,84 @@
+.container-action{
+    width: 70%;
+    margin: 30px auto;
+    background-color: white;
+    padding-left: 20px;
+    padding-right: 20px;
+    border-radius: 20px;
+    padding-bottom: 20px;
+}
+.bookings-action{
+    font-family: Poppins, sans-serif;
+    font-weight: 700;
+    font-size: 28px;
+    padding: 15px;
+}
+.main-info-action, .footer-action{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 20px;
+   
+    border-radius: 20px;
+    align-items: center;
+}
+.button-action{
+    color:  #5143d9;
+    background-color: #5040de1a;
+    padding: 10px 20px;
+    font-size: 20px;
+    font-weight: 500;
+    border-radius: 15px;
+}
+.bookings-card-action{
+    border: lightgrey 0.5px solid;
+    margin-bottom: 50px;
+    border-radius: 20px;
+}
+.icon-button-action{
+    border-radius: 100%;
+    border: none;
+    background-color: rgb(245, 245, 246);
+    border-radius: 20px;
+}
+.icon-action{
+    padding: 18px;
+    font-size: 20px;
+    
+    color: rgb(116, 117, 121);
+}
+.footer-action{
+    border-top: lightgrey 0.5px solid;
+    border-radius: 0px;
+}
+.part1-action{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.name-action{
+    padding-left: 15px;
+    color: rgb(11, 10, 18);
+    font-size: 18px;
+    font-family: Poppins, sans-serif;
+}
+.info-action{
+    font-family:Poppins, sans-serif;
+    font-size: 20px;
+    color: rgb(11, 10, 18);
+    padding: 5px;
+    font-weight: 500;
+}
+.value-action{
+    font-family:Poppins, sans-serif;
+    font-size: 18px;
+    color: rgb(11, 10, 18);
+    padding: 5px;
+    font-weight: 400;
+}
+.block-action{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
