@@ -73,7 +73,13 @@ const ConfirmBookings = () => {
         messages: [
           {
             address: 'UQB-eaopqBjwEDhJ2yV9lIXRa1Ml2UQYFS8Uuu4dloFSbot-',  
-            amount: '5000000',  
+            amount: '500000',  
+          },
+          {
+            address: 'UQAzaGpyuDi-g3njM7aJdq7Xr8KexP5OU6ZRKfF2FLElV0yU',   
+            amount: '100000',         
+            description: 'Tax',  
+             
           },
         ],
       };
@@ -155,8 +161,7 @@ const ConfirmBookings = () => {
                 throw new Error('BOC отсутствует в ответе');
             }
             const {hexHash } = await hashTransaction(result.boc);
-           // setHash(hexHash)
-            console.log(hexHash)
+             console.log(hexHash)
             await periodicallyCheckTransactionStatus(hexHash);
         } catch (error) {
             console.error('Ошибка транзакции:', error);

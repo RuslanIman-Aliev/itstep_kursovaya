@@ -19,47 +19,20 @@
     background-color: #f4f4f4;
     font-weight: bold;
   }
-  
-  .status-booked {
-    color: green;
-    font-weight: bold;
-  }
-  
-  .status-reserved {
-    color: blue;
-    font-weight: bold;
-  }
-  
-  .status-available {
-    color: orange;
-    font-weight: bold;
-  }
-  
-  .status-cancel {
-    color: red;
-    font-weight: bold;
-  }
-  
-  .payment-full {
-    color: green;
-  }
-  
-  .payment-half {
-    color: orange;
-  }
-  
-  .payment-on-property {
-    color: gold;
-  }
-  
   .view-button {
     background-color: #007bff;
     color: white;
     border: none;
+    width: 50%;
     padding: 5px 10px;
+    border-radius: 10px;
     cursor: pointer;
   }
-  
+  .button-td{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
   .view-button:hover {
     background-color: #0056b3;
   }

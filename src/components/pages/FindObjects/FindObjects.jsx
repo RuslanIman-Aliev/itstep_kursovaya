@@ -20,19 +20,43 @@ const FindObjects = () => {
     const date = dateRange.split(' to ') || "";
     const dateIn = date[0] || "";
     const dateOut = date[1] || "";
+    const placeholderObject = [
+        {
+            idises: 1,
+            names: "Default Hotel",
+            addresses: {
+                postalCode: "00000",
+                street: "Default Street",
+                city: "Default City",
+                country: "Default Country"
+            },
+            photoses: ["https://via.placeholder.com/150"],
+            pricees: 100,
+            reviewses: { starsCount: 4 }
+        }
+    ];
+    
     console.log(dateIn);
     console.log(dateOut);
     console.log(guests, dateRange, location)
+    const object = []
+    object.info = "dasda"
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const objectsUrl = `https://localhost:7152/api/objects/getlistobjects?city=${location}&guestCount=${guests}&dateIn=${dateIn}&dateOut=${dateOut}`
                 const dataObject = await fetchInfo(objectsUrl)
                 setObjects(dataObject)
+                if (!dataObject || dataObject.length === 0) {
+                    setObjects([]);  
+                } else {
+                    setObjects(dataObject);
+                }
 
-                console.log(dataObject)
+                console.log(dataObject);
             } catch (er) {
                 console.error('Fetch error:', er);
+                setObjects([]); 
             }
         };
 
@@ -129,7 +153,7 @@ const FindObjects = () => {
                     </div>
 
                 </div>
-                <ObjectList objects={objects} />
+                <ObjectList object={objects.length > 0 ? objects : placeholderObject} />
             </div>
         </div>
     )

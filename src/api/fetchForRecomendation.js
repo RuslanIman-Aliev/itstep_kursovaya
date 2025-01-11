@@ -6,7 +6,7 @@ export const fetchForRecomendation = async (latitude, longitude,type) => {
         }
         const data = await response.json();
         console.log('Fetched data:', data);
-        return data.results.slice(0, 3);  
+        return data.results.slice(0, 6);  
     } catch (error) {
         console.error('Fetch error', error);
         throw error;

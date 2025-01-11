@@ -17,7 +17,7 @@ html, body{
     text-decoration: none;
     white-space: nowrap;
     color: black;}
-li{
+.li-navbar{
     list-style-type: none;
     padding: 15px;
     margin-left: 15px;
@@ -36,6 +36,7 @@ a{
     margin-left: 20px;
     width: 100%;
 }
+
 .signIn{
     margin-right: 50px;
 }
@@ -59,6 +60,7 @@ a{
     cursor: pointer;
     margin: 0px;
     margin-left: 15px;
+    font-size: 22px;
     padding: 15px 12px;
      border-radius: 16px;
      text-align: center;
@@ -102,4 +104,37 @@ a{
     font-size: 24px;
     padding-top: 20px;
     cursor: pointer;
+}
+
+@media (max-width:1100px) {
+    .listUser{
+        width: 50%;
+    }
+    .menuList{
+        width: 70%;
+        padding: 0px;
+    }
+    li{
+        padding: 15px 5px;
+        margin: 5px;
+    }
+}
+@media (max-width:700px) {
+    .listUser{
+        width: 50%;
+    }
+    .menuList{
+        width: 70%;
+        padding: 0px;
+    }
+    #ton-connect-button{
+        display: none;
+        max-width: 150px;
+        height: 5px;
+        padding: 0px;
+     }
+    li{
+        font-size: 10px;
+    }
+      
 }

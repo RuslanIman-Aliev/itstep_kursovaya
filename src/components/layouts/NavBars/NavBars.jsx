@@ -3,15 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { TonConnectButton } from '@tonconnect/ui-react';
 import { checkAuth } from '../../pages/Auth/CheckAuth';
 import { IoIosArrowDown } from "react-icons/io";
-
 import './NavBars.css';
-
 
 const NavBars = () => {
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
     const [auth, setAuth] = useState(null);
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false); // Состояние для дропдаун-меню
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);  
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -42,7 +40,7 @@ const NavBars = () => {
             }
         };
         fetchUserData();
-    }, [navigate]);
+    }, [navigate, auth]);
 
     const toggleDropdown = () => {
         setIsDropdownOpen((prev) => !prev);
@@ -62,19 +60,33 @@ const NavBars = () => {
         document.addEventListener('click', handleClickOutside);
         return () => document.removeEventListener('click', handleClickOutside);
     }, []);
-
+    const handleLogout = async () => {
+        try {
+            const response = await fetch('https://localhost:7152/api/user/logout', {
+                method: 'POST',
+                credentials: 'include',
+            });
+            if (response.ok) {
+                setUser(null);
+                setAuth(null);
+            }
+           
+        } catch (error) {
+            console.error('Error occurred during logout:', error);
+        }
+    };
     return (
         <div className="mainContainer">
             <div className="menu">
                 <ul className="menuList">
-                    <li><a href="">MyLogoandSiteName</a></li>
-                    <li onClick={()=> navigate("/")}><a href="">Home</a></li>
-                    <li><a href="">Book places</a></li>
-                    <li><a href="">Contact</a></li>
+                    <li className='li-navbar'><a href="">BookWithLove</a></li>
+                    <li className='li-navbar' onClick={()=> navigate("/")}><a href="">Home</a></li>
+                    <li className='li-navbar'><a href="">Book places</a></li>
+                    <li className='li-navbar'><a href="">Contact</a></li>
                     <ul className="listUser">
                         {!auth ? (
                             <>
-                                <li className="signIn"><a href="/login">Sign In</a></li>
+                                <li  className="signIn" onClick={()=>navigate('/login')}><a href="/login">Sign In</a></li>
                                 <li><a href="/register">Sign Up</a></li>
                             </>
                         ) : (
@@ -91,12 +103,11 @@ const NavBars = () => {
                                 {isDropdownOpen && (
                                     <div className="dropdown-menu">
                                         <ul>
-                                            <li><a href="/profile">My Objects</a></li>
-                                            <li onClick={()=> navigate("/add")}><a>Add objects</a></li>
-                                            <li><a href="/bookings">My Bookings</a></li>
-                                            <li><a href="/settings">My Favorites</a></li>
-                                            <li><a href="/help">Help Center</a></li>
-                                            <li onClick={() => console.log('Sign Out')}>Sign Out</li>
+                                            <li  className='li-navbar' onClick={()=> navigate("/objects/listings")}><a>My Objects</a></li>
+                                            <li className='li-navbar' onClick={()=> navigate("/add")}><a>Add objects</a></li>
+                                            <li  className='li-navbar'onClick={()=> navigate("/objects/bookings")}><a>My Bookings</a></li>
+                                            <li  className='li-navbar'onClick={()=> navigate("/objectbook/user")}><a>My Object Bookings</a></li>
+                                            <li  className='li-navbar'onClick={handleLogout}>Sign Out</li>
                                         </ul>
                                     </div>
                                 )}

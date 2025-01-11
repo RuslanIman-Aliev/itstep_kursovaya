@@ -74,3 +74,41 @@
 .div-container .check-availability{
   width: 100% ;
 }
+@media (max-width: 1100px) {
+  .div-container{
+    width: 90%;
+    margin: 0px auto;
+    margin-left: 75px;
+  }
+  .main-info{
+    margin: 0px auto;
+  }
+  .form-container{
+    width: 100%;
+  }
+  .input-style{
+    width: 80%;
+  }
+  .div-container .check-availability{
+    width: 90% ;
+  }
+}
+@media (max-width: 900px) {
+  .div-container{
+    width: 90%;
+    margin: 0px auto;
+    margin-left: 75px;
+  }
+  .main-info{
+    margin: 0px auto;
+  }
+  .form-container{
+    width: 100%;
+  }
+  .input-style{
+    width: 80%;
+  }
+  .div-container .check-availability{
+    width: 50% ;
+  }
+}

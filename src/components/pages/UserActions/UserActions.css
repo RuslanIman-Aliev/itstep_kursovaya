@@ -2,8 +2,7 @@
     width: 70%;
     margin: 30px auto;
     background-color: white;
-    padding-left: 20px;
-    padding-right: 20px;
+    
     border-radius: 20px;
     padding-bottom: 20px;
 }
@@ -29,11 +28,14 @@
     font-size: 20px;
     font-weight: 500;
     border-radius: 15px;
+    cursor: pointer;
 }
 .bookings-card-action{
     border: lightgrey 0.5px solid;
     margin-bottom: 50px;
     border-radius: 20px;
+    display: flex;
+    flex-direction: column;
 }
 .icon-button-action{
     border-radius: 100%;
@@ -81,4 +83,15 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+.user-listings .container2-main-object-list{
+    width: 100%;
+     gap: 40px;
+     padding: 0px;
+}
+.user-listings{
+    background-color: rgb(250,252,252);
+}
+.container1-action{
+    padding: 0px 20px;
 }

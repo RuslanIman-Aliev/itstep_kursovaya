@@ -293,10 +293,9 @@ const NewObject = () => {
             const uploadedUrls = [];
 
             for (const image of images) {
-                const file = image.file || image; // Извлечение файла из объекта
+                const file = image.file || image;  
                 const blobName = `${Date.now()}-${file.name}`;
 
-                // Получаем SAS URL с бэкенда
                 const sasUrl = await getSasUrl(encodeURIComponent(blobName));
                 if (!sasUrl) {
                     console.error("Не удалось получить SAS URL для файла", file.name);

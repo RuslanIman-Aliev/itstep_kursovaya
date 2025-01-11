@@ -1,74 +1,84 @@
-import React from "react";
-import "./BookingTable.css";  
-
-const bookings = [
-  { id: 1, name: "Deluxe Pool View", type: "With Breakfast", date: "Nov 22 – 25", status: "Booked", payment: "Full payment" },
-  { id: 2, name: "Deluxe Pool View with Breakfast", type: "Free Cancellation | Breakfast only", date: "Nov 24 – 28", status: "Booked", payment: "On Property" },
-  { id: 3, name: "Luxury Room with Balcony", type: "Free Cancellation | Breakfast + Lunch/Dinner", date: "Nov 24 – 28", status: "Reserved", payment: "Half Payment" },
-  { id: 4, name: "Deluxe Room Twin Bed With Balcony", type: "Free Cancellation", date: "Nov 28 – 30", status: "Booked", payment: "Full payment" },
-  { id: 5, name: "Deluxe Room Twin Bed With Balcony", type: "Free Cancellation | Breakfast only", date: "Nov 28 – 30", status: "Available", payment: "On Property" },
-  { id: 6, name: "Premium Room With Balcony", type: "Free Cancellation | Breakfast only", date: "Nov 14 – 18", status: "Cancel", payment: "Half Payment" },
-];
-
-const getStatusClass = (status) => {
-  switch (status) {
-    case "Booked":
-      return "status-booked";
-    case "Reserved":
-      return "status-reserved";
-    case "Available":
-      return "status-available";
-    case "Cancel":
-      return "status-cancel";
-    default:
-      return "";
-  }
-};
-
-const getPaymentClass = (payment) => {
-  switch (payment) {
-    case "Full payment":
-      return "payment-full";
-    case "Half Payment":
-      return "payment-half";
-    case "On Property":
-      return "payment-on-property";
-    default:
-      return "";
-  }
-};
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { fetchInfo } from "../../../api/fetchApi";
+import "./BookingTable.css";
 
 const BookingsTable = () => {
-  return (
-    <div className="bookings-table-container">
-      <h2>Bookings</h2>
-      <table className="bookings-table">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Name</th>
-            <th>Type</th>
-            <th>Date</th>
-            <th>Status</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {bookings.map((booking) => (
-            <tr key={booking.id}>
-              <td>{booking.id}</td>
-              <td>{booking.name}</td>
-              <td>{booking.type}</td>
-              <td>{booking.date}</td>
-              <td className={getStatusClass(booking.status)}>{booking.status}</td>
-              <td className={getPaymentClass(booking.payment)}>{booking.payment}</td>
-              <td><button className="view-button">View</button></td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
+    const [user, setUser] = useState('');
+    const [bookings, setBookings] = useState([]);
+    const navigate = useNavigate();
+    const { role } = useParams(); 
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const response = await fetch("https://localhost:7152/api/user/me", {
+                method: "GET",
+                credentials: "include",
+            });
+
+            if (!response.ok) {
+                console.error("Failed to fetch user data");
+                return;
+            }
+
+            const userData = await response.json();
+            setUser(userData);
+            console.log(role)
+            let bookingsUrl;
+            if (role === "admin") {
+                bookingsUrl = `https://localhost:7152/api/objects/all-bookings?userId=${userData.id}`; 
+            } else {
+                bookingsUrl = `https://localhost:7152/api/user/getUserBookObject/${userData.id}`;  
+            }
+
+            const data = await fetchInfo(bookingsUrl);
+            setBookings(data);
+        };
+
+        fetchData();
+    }, [role]);
+
+    return (
+        <div className="bookings-table-container">
+            <h2>{role === "admin" ? "All Bookings" : "Your Bookings"}</h2>
+            <table className="bookings-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Date</th>
+                        <th>Total Price</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {bookings.flatMap((object, index) =>
+                        object.bookings
+                            .sort((a, b) => new Date(b.dateIn) - new Date(a.dateIn))
+                            .map((b, subIndex) => (
+                                <tr key={`${index}-${subIndex}`}>
+                                    <td>{index + subIndex + 1}</td>
+                                    <td>{object.objectName}</td>
+                                    <td>
+                                        {b.dateIn ? new Date(b.dateIn).toLocaleDateString() : "N/A"} -{" "}
+                                        {b.dateOut ? new Date(b.dateOut).toLocaleDateString() : "N/A"}
+                                    </td>
+                                    <td>{b.totalPayingSum ? `$${b.totalPayingSum}` : "N/A"}</td>
+                                    <td className="button-td">
+                                        <button
+                                            className="view-button"
+                                            onClick={() => navigate(`/object/${object.objectId}`)}
+                                        >
+                                            View
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))
+                    )}
+                </tbody>
+            </table>
+        </div>
+    );
 };
 
 export default BookingsTable;

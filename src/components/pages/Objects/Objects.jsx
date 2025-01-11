@@ -33,6 +33,9 @@ const Objects = (formData ) => {
     const [user,setUser] = useState('')
     const [guestsError, setGuestsError] = useState('');
     const [isUserObj,setUserObj] = useState(false)
+    const [lat,setLat] = useState(false)
+    const [lng,setLng] = useState(false)
+
     const navigate = useNavigate();
     console.log(formData)
     useEffect(() => {
@@ -84,6 +87,8 @@ const Objects = (formData ) => {
                 const address = `${dataObject?.address?.postalCode}+${dataObject?.address?.street}+${dataObject?.address?.city}+${dataObject?.address?.country}`;
                 const result = await fetchBestPlacesNear(address);
                 const { lat, lng } = result?.results[0]?.geometry.location;
+                setLat(lat)
+                setLng(lng)
                 const bestProposition = await fetchForRecomendation(lat, lng, "tourist_attraction");
                 setBestPlaces(bestProposition);
                 const bestRestaurants = await fetchForRecomendation(lat, lng, "restaurant");
@@ -172,7 +177,7 @@ const Objects = (formData ) => {
             return;
         }
 
-        if (!guests || isNaN(guests) || guests >=object?.special?.totalCapacity || guests <1 ) {
+        if (!guests || isNaN(guests) || guests >=object?.special?.maxPeopleCapacity || guests <1 ) {
             setGuestsError("Please enter a valid number of guests.");
             return;
         }
@@ -180,7 +185,7 @@ const Objects = (formData ) => {
          const items = object;
         const address = items?.address;
         const totalCount = items?.price * days;
-        const service = totalCount * 0.01;
+        const service = Math.round(totalCount * 0.01 * 100) / 100;
         const totalSum = service + totalCount;
         const totalAddress = `${address?.postalCode} ${address?.street} ${address?.city} ${address?.country}`;
         console.log(totalAddress)
@@ -338,7 +343,9 @@ const Objects = (formData ) => {
                     {items?.description || formData?.formData?.description}
                 </div>
 
-                <PopularPlaces places={bestPlaces} />
+                <h2 className='popular-places-object'>Popular places nearby</h2>
+                <PopularPlaces places={bestPlaces} originLat={lat} originLng={lng} />
+                <h2 className='popular-places-object'>Popular restaurants nearby</h2>
                 <PopularPlaces places={bestRestaurant} type="restaurant" />
             </div>
         </div>

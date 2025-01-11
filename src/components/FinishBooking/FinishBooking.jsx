@@ -27,7 +27,7 @@ const FinishBooking = () => {
     const myObject = JSON.parse(decodeURIComponent(objectString));
 
     const [isBooked, setIsBooked] = useState(false);
-    const [isRequestSent, setIsRequestSent] = useState(false); // Новый флаг для предотвращения повторного запроса
+    const [isRequestSent, setIsRequestSent] = useState(false); 
 
     const data = useMemo(() => ({
         objectId: myObject.id,
@@ -45,7 +45,7 @@ const FinishBooking = () => {
     }), [myObject]);
 
     useEffect(() => {
-        if (isRequestSent || isBooked) return; // Предотвращаем повторную отправку
+        if (isRequestSent || isBooked) return;  
 
         const bookTrip = async () => {
             try {
@@ -70,7 +70,7 @@ const FinishBooking = () => {
             } catch (error) {
                 console.error('Error:', error);
             } finally {
-                setIsRequestSent(true); // Флаг запроса устанавливается в любом случае
+                setIsRequestSent(true);  
             }
         };
 
@@ -122,7 +122,7 @@ const FinishBooking = () => {
                     </div>
                 </div>
                 <div className="btn-div-finish">
-                    <button className="button-finish">Ok</button>
+                    <button className="button-finish" onClick={()=> navigate('/')}>Ok</button>
                 </div>
 
             </div>

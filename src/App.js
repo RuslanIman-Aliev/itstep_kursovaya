@@ -14,6 +14,7 @@ import NavBars from './components/layouts/NavBars/NavBars';
 import NewObject from './components/pages/NewObject/NewObject';
 import UserActions from './components/pages/UserActions/UserActions';
 import BookingsTable from './components/pages/UserActions/BookingTable';
+import RoomList from './components/pages/Adminer/Adminer';
   
 function App() {
   return (
@@ -25,52 +26,21 @@ function App() {
       >
         <Router>
           <Routes>
-            <Route
-              path="/"
-              element={
-                <PageWithNavBars>
-                  {/* <About />
-                  <Info />
-                  <BestProposition />    */}
-                  {/* <UserActions/> */}
-                  <BookingsTable/>
-                </PageWithNavBars>
+            <Route path="/" element={ <PageWithNavBars>  <About /><Info /><BestProposition /></PageWithNavBars>
                 
               }
             />
-             <Route
-              path="/add"
-              element={
-                <PageWithNavBars>
-                  <NewObject/>
-                </PageWithNavBars>
-                
-              }
-            />
-            <Route
-              path="/object/:id"
-              element={<PageWithNavBars><Objects /></PageWithNavBars>}
-            />
+            <Route path="/add" element={<PageWithNavBars><NewObject/></PageWithNavBars> }/>
+            <Route path="/object/:id" element={<PageWithNavBars><Objects /></PageWithNavBars>}/>
+            <Route path="/objects/:type" element={<PageWithNavBars><UserActions /></PageWithNavBars>}/>
+            <Route path="/objectbook/:role" element={<PageWithNavBars><BookingsTable /></PageWithNavBars>}/>
             <Route path="/login" element={<Auth />} />
-            <Route path="/register" element={<Auth />} />
-            <Route
-              path="/list"
-              element={
-                   <PageWithNavBars><FindObjects /></PageWithNavBars>
-               }
-            />
-            <Route
-              path="/confirm"
-              element={
-                   <PageWithNavBars><ConfirmBookings /></PageWithNavBars>
-               }
-            />
-            <Route
-              path="/finishbooking"
-              element={
-                    <FinishBooking /> 
-               }
-            />
+            <Route path="/register" element={<Register />} />
+            <Route path="/list" element={<PageWithNavBars><FindObjects /></PageWithNavBars>}/>
+            <Route path="/confirm"element={<PageWithNavBars><ConfirmBookings /></PageWithNavBars>}/>
+            <Route path="/finishbooking" element={<FinishBooking /> }/>
+            <Route path="/adminer" element={<RoomList /> }/>
+
           </Routes>
         </Router>
       </TonConnectUIProvider>

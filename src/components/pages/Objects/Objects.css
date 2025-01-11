@@ -153,7 +153,6 @@
 .description-object {
   margin-top: 20px;
   font-size: 14px;
-  max-width: 1000px;
   line-height: 1.6;
   color: #333;
 }
@@ -206,6 +205,7 @@
 }
 .second-container-object{
   margin: 10px auto;
+  padding: 0px auto;
 }
 .block-container-object{
   display: flex;
@@ -246,6 +246,70 @@
   text-align: center;
   margin-bottom: 5px;
 }
-.image-object{
+ .description-object{
+  padding: 20px 60px;
+ }
+ 
+ .popular-places-object{
+  font-size: 20px;
+  margin: auto;
+  padding: 0px 60px;
+ }
+ .block-popular-object{
+  font-size: 20px;
+    font-family: "DM Sans", sans-serif;
+ }
+ .navigate-button{
+  background-color: #6c63ff;
+  color: white;
+  border-radius: 15px;
+  border: none;
+ 
+width: 200px;
+padding: 10px 20px;}
+.button-places{
+ display: flex;
+  justify-content: end; 
+}
 
+@media (max-width:1100px){
+  .container-img-pay-object{
+    flex-direction: column;
+    }
+    .payment-form-object{
+      display: flex;
+justify-content: center;
+align-items: center;
+margin: 0px auto;
+    }
+    .blockes-best{
+      width: 75%;
+    }
+  .payment-object{
+    justify-content: center;
+    align-items: center;
+  }
+}
+@media (max-width:300px){
+  .container-img-pay-object{
+    margin: 0px auto;
+    justify-content: center;
+align-items: center;
+width: 70%;
+    }
+   
+    .address-photo-object{
+      justify-content: center;
+      align-items: center;
+    }
+    .payment-form-object{
+      display: flex;
+justify-content: center;
+align-items: center;
+margin: 0px auto;
+    }
+  .payment-object{
+    justify-content: center;
+    align-items: center;
+  }
 }

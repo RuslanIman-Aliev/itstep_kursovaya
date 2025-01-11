@@ -76,7 +76,7 @@ const Auth = () => {
                     Login
                 </button>
                 <p className="register-text-auth">
-                    Don't have an account? <a className="signUp-auth" href="">Sign Up</a>
+                    Don't have an account? <a className="signUp-auth" href="" onClick={()=>navigate('/register')}>Sign Up</a>
                 </p>
             </div>
         )}

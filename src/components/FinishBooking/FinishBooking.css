@@ -97,3 +97,33 @@ body{
     justify-content: center;
     padding-bottom: 20px;
 }
+@media (max-width:950px){
+    .card-finish{
+        width: 90%;
+    }
+    .main-container-finish{
+        width: 85%;
+        margin: 0px auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}
+@media (max-width:600px){
+    .main-info-finish{
+        flex-direction: column;
+    }
+    .info-container-finish{
+        width: 100%;
+    }
+    .info-finish{
+        width: 90%;
+    }
+    .value-finish{
+        width: 100px;
+
+    }
+    .part1-info-finish, .part2-info-finish{
+        width: 100%;
+    }
+}
